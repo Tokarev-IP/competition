@@ -4,18 +4,20 @@ import android.net.Uri
 
 interface DownloadFileUseCaseInterface {
 
-    fun downloadUriOfMenuPicture(
+    suspend fun downloadUriOfMenuPicture(
         pathString: String = "pic",
         menuId: String,
-        onSuccess: (uri: Uri) -> Unit,
-        onFailure: (msg: String) -> Unit,
-    )
+    ): Uri
 
-    fun downloadUriOfDishPicture(
+    suspend fun downloadUriOfDishPicture(
         pathString: String = "dish",
         menuId: String,
         dishId: String,
-        onSuccess: (uri: Uri) -> Unit,
-        onFailure: (msg: String) -> Unit,
-    )
+    ): Uri
+
+    suspend fun downloadDishImageFile(
+        pathString: String = "dish",
+        menuId: String,
+        dishId: String,
+    ): ByteArray
 }

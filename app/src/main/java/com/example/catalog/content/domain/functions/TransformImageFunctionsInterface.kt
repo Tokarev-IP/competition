@@ -70,4 +70,15 @@ interface TransformImageFunctionsInterface {
         return outputStream.toByteArray()
     }
 
+    fun transformImageFromUriToBitmap(
+        imageUri: Uri,
+        appContext: Context,
+    ): Bitmap {
+        val imageStream: InputStream? = appContext.contentResolver.openInputStream(imageUri)
+
+        val bitmap = BitmapFactory.decodeStream(imageStream)
+
+        return bitmap
+    }
+
 }

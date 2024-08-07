@@ -1,33 +1,25 @@
 package com.example.catalog.content.domain.interfaces
 
 import com.example.catalog.content.domain.data.DishData
-import com.example.catalog.content.domain.data.MenuId
-import com.example.catalog.content.domain.data.MenuInfo
+import com.example.catalog.content.domain.data.MenuIdFirebase
+import com.example.catalog.content.domain.data.MenuInfoFirebase
 
 interface DownloadDataUseCaseInterface {
 
-    fun downloadMenuId(
+    suspend fun downloadMenuId(
         collection: String = "id",
         userId: String,
-        onSuccess: (menuId: MenuId) -> Unit,
-        onNull: () -> Unit,
-        onFailure: (msg: String) -> Unit
-    )
+    ): MenuIdFirebase?
 
-    fun downloadMenuInfoData(
+    suspend fun downloadMenuInfoData(
         collection: String = "menu",
         menuId: String,
-        onSuccess: (menuInfo: MenuInfo) -> Unit,
-        onNull: () -> Unit,
-        onFailure: (msg: String) -> Unit
-    )
+    ): MenuInfoFirebase?
 
-    fun downloadMenuDishListData(
+    suspend fun downloadMenuDishListData(
         collection1: String = "data",
         collection2: String = "menu",
         menuId: String,
-        onSuccess: (List<DishData>) -> Unit,
-        onFailure: (msg: String) -> Unit
-    )
+    ): List<DishData>
 
 }

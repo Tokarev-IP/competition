@@ -5,45 +5,19 @@ import android.net.Uri
 
 interface TransformImageUseCaseInterface {
 
-    fun getBitmapFromUriHighQuality(
+    suspend fun getBitmapFromUri(
         imageUri: Uri,
-        maxWidth: Int = 800,
-        maxHeight: Int = 800,
-        quality: Int = 80,
     ): Bitmap
 
-    fun getBitmapFromUriMediumQuality(
-        imageUri: Uri,
-        maxWidth: Int = 800,
-        maxHeight: Int = 800,
-        quality: Int = 60,
+    suspend fun getByteArrayFromBitmapWithQuality(
+        bitmap: Bitmap,
+        format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
+        quality: Int = 100
+    ): ByteArray
+
+    suspend fun compressBitmap(
+        bitmap: Bitmap,
+        format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
+        quality: Int
     ): Bitmap
-
-    fun getBitmapFromUriLowQuality(
-        imageUri: Uri,
-        maxWidth: Int = 800,
-        maxHeight: Int = 800,
-        quality: Int = 40,
-    ): Bitmap
-
-    fun getByteArrayFromUriHighQuality(
-        imageUri: Uri,
-        maxWidth: Int = 800,
-        maxHeight: Int = 800,
-        quality: Int = 80,
-    ): ByteArray
-
-    fun getByteArrayFromUriMediumQuality(
-        imageUri: Uri,
-        maxWidth: Int = 800,
-        maxHeight: Int = 800,
-        quality: Int = 60,
-    ): ByteArray
-
-    fun getByteArrayFromUriLowQuality(
-        imageUri: Uri,
-        maxWidth: Int = 800,
-        maxHeight: Int = 800,
-        quality: Int = 40,
-    ): ByteArray
 }

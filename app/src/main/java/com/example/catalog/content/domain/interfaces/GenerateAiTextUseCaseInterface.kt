@@ -7,7 +7,15 @@ interface GenerateAiTextUseCaseInterface {
     suspend fun generateFunnyNameOfDishUsingImage(
         imageBitmap: Bitmap,
         parameters: List<String?>,
-        onResponse: (String) -> Unit,
-        onFailure: () -> Unit
-    )
+    ): String
+
+    suspend fun translateText(
+        text: String,
+        language: String,
+    ): String
+
+    suspend fun generateAiDescriptionOfDish(
+        imageBitmap: Bitmap,
+        dishName: String,
+    ): String
 }

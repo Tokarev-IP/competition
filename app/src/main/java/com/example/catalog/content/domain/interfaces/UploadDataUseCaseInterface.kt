@@ -1,34 +1,28 @@
 package com.example.catalog.content.domain.interfaces
 
-import com.example.catalog.content.domain.data.DishData
-import com.example.catalog.content.domain.data.MenuId
-import com.example.catalog.content.domain.data.MenuInfo
+import com.example.catalog.content.domain.data.DishDataFirebase
+import com.example.catalog.content.domain.data.MenuIdFirebase
+import com.example.catalog.content.domain.data.MenuInfoFirebase
 
 interface UploadDataUseCaseInterface {
 
-    fun uploadMenuId(
+    suspend fun uploadMenuId(
         collection: String = "id",
         userId: String,
-        menuId: MenuId,
-        onSuccess: () -> Unit,
-        onFailure: (msg: String) -> Unit
+        menuIdFirebase: MenuIdFirebase,
     )
 
-    fun uploadMenuInfoData(
+    suspend fun uploadMenuInfoData(
         collection: String = "menu",
-        data: MenuInfo,
+        data: MenuInfoFirebase,
         menuId: String,
-        onSuccess: () -> Unit,
-        onFailure: (msg: String) -> Unit
     )
 
-    fun uploadMenuDishData(
+    suspend fun uploadMenuDishData(
         collection1: String = "data",
         collection2: String = "menu",
-        data: DishData,
+        data: DishDataFirebase,
         menuId: String,
         documentId: String,
-        onSuccess: () -> Unit,
-        onFailure: (msg: String) -> Unit
     )
 }

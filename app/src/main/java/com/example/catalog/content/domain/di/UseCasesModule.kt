@@ -1,17 +1,21 @@
 package com.example.catalog.content.domain.di
 
+import com.example.catalog.content.domain.functions.CreateDocFileInterface
+import com.example.catalog.content.domain.functions.TransformBitmapImageInterface
 import com.example.catalog.content.domain.interfaces.TransformImageUseCaseInterface
-import com.example.catalog.content.domain.usecases.DownloadDataUseCase
-import com.example.catalog.content.domain.usecases.DownloadFileUseCase
-import com.example.catalog.content.domain.usecases.UploadDataUseCase
-import com.example.catalog.content.domain.usecases.UploadFileUseCase
+import com.example.catalog.content.domain.usecases.network.DownloadDataUseCase
+import com.example.catalog.content.domain.usecases.network.DownloadFileUseCase
+import com.example.catalog.content.domain.usecases.network.UploadDataUseCase
+import com.example.catalog.content.domain.usecases.network.UploadFileUseCase
 import com.example.catalog.content.domain.interfaces.DownloadDataUseCaseInterface
 import com.example.catalog.content.domain.interfaces.DownloadFileUseCaseInterface
 import com.example.catalog.content.domain.interfaces.GenerateAiTextUseCaseInterface
 import com.example.catalog.content.domain.interfaces.UploadDataUseCaseInterface
 import com.example.catalog.content.domain.interfaces.UploadFileUseCaseInterface
-import com.example.catalog.content.domain.usecases.TransformImageUseCase
-import com.example.catalog.content.domain.usecases.GenerateAiTextUseCase
+import com.example.catalog.content.domain.usecases.logic.CreateDocFile
+import com.example.catalog.content.domain.usecases.logic.TransformImageUseCase
+import com.example.catalog.content.domain.usecases.network.GenerateAiTextUseCase
+import com.example.catalog.content.domain.usecases.logic.SegmentImageInterfaceUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -45,4 +49,12 @@ interface UseCasesModule {
     @Singleton
     @Binds
     fun bindTransformImageUseCaseInterface(impl: TransformImageUseCase): TransformImageUseCaseInterface
+
+    @Singleton
+    @Binds
+    fun bindTransformBitmapImageInterface(impl: SegmentImageInterfaceUseCase): TransformBitmapImageInterface
+
+    @Singleton
+    @Binds
+    fun bindCreateDocFileInterface(impl: CreateDocFile): CreateDocFileInterface
 }

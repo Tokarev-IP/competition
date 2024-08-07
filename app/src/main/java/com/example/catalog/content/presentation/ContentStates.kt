@@ -1,7 +1,9 @@
 package com.example.catalog.content.presentation
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.example.catalog.content.domain.data.DishData
+import kotlinx.serialization.Serializable
 
 interface ContentUiStates {
     data object Show : ContentUiStates
@@ -10,14 +12,26 @@ interface ContentUiStates {
 }
 
 sealed interface ContentUiEvents {
-    class SaveDishItem(val dishData: DishData, val imageUri: Uri?) : ContentUiEvents
+    class SaveDishItem(val dishData: DishData) : ContentUiEvents
     class EditDishItem(val dishData: DishData) : ContentUiEvents
     data object CreateDishItem : ContentUiEvents
     data object GoBack : ContentUiEvents
     data object DownloadMenuList : ContentUiEvents
     data object CreateMenu : ContentUiEvents
     data object CheckMenuId : ContentUiEvents
-    class GenerateTextUsingGemini(val uri: Uri, val parameters: List<String?>) : ContentUiEvents
+    class GenerateDescriptionOfDish(val imageBitmap: Bitmap, val dishName: String) : ContentUiEvents
+    class SetNewDishImageFromGallery(val imageUri: Uri) : ContentUiEvents
+    class SetUpdatedImage(val bitmap: Bitmap) : ContentUiEvents
+    class SetInitialImage(val imageUri: Uri) : ContentUiEvents
+    class CreateUpdatedImage(val imageBitmap: Bitmap) : ContentUiEvents
+    class SegmentImage(val imageUri: Uri) : ContentUiEvents
+    class SaveMenuAsDocFile(val folderUri: Uri, val language: String? = null) : ContentUiEvents
+    class SetNamePriceWeightDescription(
+        val name: String,
+        val price: String,
+        val description: String,
+        val weight: String,
+    ) : ContentUiEvents
 }
 
 interface ContentUiIntents {
@@ -25,45 +39,41 @@ interface ContentUiIntents {
     data object GoToEditInfoScreen : ContentUiIntents
     data object GoBackNavigation : ContentUiIntents
     data object GoToMenuListScreen : ContentUiIntents
+    data object GoToCheckMenuScreen : ContentUiIntents
     class ShowSnackBarMsg(val msg: String) : ContentUiIntents
+    class PutUpdatedBitmapImage(val bitmap: Bitmap) : ContentUiIntents
+    class GoToUpdateDishImageScreen(val imageUriString: String) : ContentUiIntents
 }
 
-enum class ContentNavigationRoutes(val route: String) {
-    EditDishScreen("EditDishScreen"),
-    EditInfoScreen("EditInfoScreen"),
-    MenuListScreen("MenuListScreen"),
-    CheckMenuScreen("CheckMenuScreen"),
+interface ScreenRoutes {
+    @Serializable
+    data object EditDishScreen : ScreenRoutes
 
+    @Serializable
+    data object EditInfoScreen : ScreenRoutes
+
+    @Serializable
+    data object MenuListScreen : ScreenRoutes
+
+    @Serializable
+    data object CheckMenuScreen : ScreenRoutes
+
+    @Serializable
+    class UpdateDishImageScreen(val imageUriString: String) : ScreenRoutes
 }
 
-enum class ParametersForGeneratingAiDishName(
-    val parameters: List<String>,
-    val description: String,
-    val responseText: String,
+enum class LanguageList(
+    val language: String,
+    val code: String,
 ) {
-    Taste(
-        listOf("Nothing", "Sweet", "Salty", "Sour", "Bitter", "Spicy"),
-        description = "Choose taste of dish, which you want to be used in the dish name or leave neutral",
-        responseText = "the name should include main taste of the dish - ",
-    ),
-    Mood(
-        listOf(
-            "Nothing",
-            "Funny",
-            "Cute",
-            "Sad",
-            "Angry",
-            "Happy",
-            "Interesting",
-            "Boring",
-            "Serious"
-        ),
-        description = "Choose mood of dish, which you want to be used in the dish name or leave neutral",
-        responseText = "the name should include this mood - ",
-    ),
-    Season(
-        listOf("Nothing", "Winter", "Spring", "Summer", "Autumn"),
-        description = "Choose season of dish, which you want to be used in the dish name or leave neutral",
-        responseText = "the name should include the season of the dish - ",
-    ),
+    ENGLISH("English", "en"),
+    GERMAN("German", "de"),
+    ITALIAN("Italian", "it"),
+    RUSSIAN("Russian", "ru"),
+    SPANISH("Spanish", "es"),
+    FRENCH("French", "fr"),
+    PORTUGUESE("Portuguese", "pt"),
+    JAPANESE("Japanese", "ja"),
+    KOREAN("Korean", "ko"),
+    CHINESE("Chinese", "zh"),
 }

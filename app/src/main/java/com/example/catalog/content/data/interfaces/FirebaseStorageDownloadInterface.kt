@@ -9,4 +9,10 @@ interface FirebaseStorageDownloadInterface {
         onSuccess: (uri: Uri?) -> Unit,
         onFailure: (e: Exception) -> Unit,
     )
+
+    fun downloadImageFile(
+        pathString: String,
+        onSuccess: (byteArray: ByteArray) -> Unit,
+        onFailure: (e: Exception) -> Unit,
+    )
 }

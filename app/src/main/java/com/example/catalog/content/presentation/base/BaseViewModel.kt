@@ -7,14 +7,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-abstract class BaseViewModel<uiState : Any, uiIntents : Any, uiEvent : Any>(
-    initialState: uiState
-) : ViewModel() {
+abstract class BaseViewModel<uiState : Any, uiIntents : Any, uiEvent : Any>(initialState: uiState) :
+    ViewModel() {
 
-    private val uiStates = MutableStateFlow<uiState>(initialState)
+    private val uiStates = MutableStateFlow(initialState)
     private val uiStatesFlow = uiStates.asStateFlow()
 
-    private val uiIntents = MutableSharedFlow<uiIntents?>(replay = 1, extraBufferCapacity = 2, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val uiIntents = MutableSharedFlow<uiIntents?>(
+        replay = 1,
+        extraBufferCapacity = 2,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     private val uiIntentsFlow = uiIntents.asSharedFlow()
 
     protected fun setUiState(state: uiState) {

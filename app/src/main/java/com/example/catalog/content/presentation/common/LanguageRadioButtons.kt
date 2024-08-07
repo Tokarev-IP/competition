@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,39 +20,38 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.catalog.content.presentation.LanguageList
 
 @Composable
-internal fun RadioButtons(
+internal fun LanguageRadioButtons(
     modifier: Modifier = Modifier,
-    onSelected: (String?) -> Unit,
-    radioOptions: List<String>,
+    onSelected: (LanguageList?) -> Unit,
+    radioOptions: List<LanguageList>,
     infoText: String,
-    responseText: String,
 ) {
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
 
     Column(
         modifier = modifier
-            .padding(20.dp)
+            .padding(12.dp)
             .fillMaxWidth(),
     ) {
-        HorizontalDivider()
         Spacer(modifier = modifier.height(8.dp))
         Text(text = infoText)
         Spacer(modifier = modifier.height(8.dp))
         Column(modifier.selectableGroup()) {
-            radioOptions.forEach { text ->
+            radioOptions.forEach { element ->
                 Row(
                     modifier
                         .fillMaxWidth()
                         .selectable(
-                            selected = (text == selectedOption),
+                            selected = (element == selectedOption),
                             onClick = {
-                                onOptionSelected(text)
-                                if (radioOptions[0] == text)
+                                onOptionSelected(element)
+                                if (radioOptions[0] == element)
                                     onSelected(null)
                                 else
-                                    onSelected(responseText + text)
+                                    onSelected(element)
                             },
                             role = Role.RadioButton
                         )
@@ -63,11 +61,11 @@ internal fun RadioButtons(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = (text == selectedOption),
+                        selected = (element == selectedOption),
                         onClick = null
                     )
                     Text(
-                        text = text,
+                        text = element.language,
                         modifier = modifier.padding(start = 16.dp)
                     )
                 }
@@ -79,10 +77,9 @@ internal fun RadioButtons(
 @Preview(showBackground = true)
 @Composable
 private fun GenerateAiDishNameBottomSheetPreview() {
-    RadioButtons(
+    LanguageRadioButtons(
         onSelected = {},
-        radioOptions = listOf("Norm", "Good", "Bad", "Better", "Worse"),
-        infoText = "Please, choose only one parameter which you want to use for generating dish name:",
-        responseText = "You selected: ",
+        radioOptions = LanguageList.entries.toList(),
+        infoText = "Please, choose language to translate:",
     )
 }

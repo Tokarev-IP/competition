@@ -1,15 +1,11 @@
 package com.example.catalog.content.presentation.views
 
-import android.net.Uri
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Box
+import android.graphics.Bitmap
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,7 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,9 +28,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.presentation.ContentUiEvents
+import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
-import com.example.catalog.content.presentation.common.CancelAndSaveButtons
-import com.example.catalog.content.presentation.common.ChooseImage
+import com.example.catalog.content.presentation.common.CancelAndAcceptButtons
+import com.example.catalog.content.presentation.common.ChooseImageItem
 
 @Composable
 internal fun EditDishView(
@@ -42,77 +39,64 @@ internal fun EditDishView(
     uiState: ContentUiStates,
     eventHandler: (ContentUiEvents) -> Unit,
     dishData: DishData,
-    onOpenDishNameDialog: (uri: Uri) -> Unit,
+    innerPadding: PaddingValues,
+    onChooseNewImage: () -> Unit,
+    onEditNewImage: (bitmap: Bitmap) -> Unit,
 ) {
-    var imageUriString by rememberSaveable { mutableStateOf(dishData.image) }
-    var dishNameText by rememberSaveable { mutableStateOf(dishData.name) }
-    var dishDescriptionText by rememberSaveable { mutableStateOf(dishData.description) }
-    var dishPriceText by rememberSaveable { mutableStateOf(dishData.price.toString()) }
-    var imageUri: Uri? by rememberSaveable { mutableStateOf(null) }
+    var imageModel by remember { mutableStateOf(dishData.imageModel) }
+    var dishNameText by remember { mutableStateOf(dishData.name) }
+    var dishDescriptionText by remember { mutableStateOf(dishData.description) }
+    var dishPriceText by remember { mutableStateOf(dishData.price.toString()) }
+    var dishWeightText by remember { mutableStateOf(dishData.weight.toString()) }
+    var updatedImageModel: Bitmap? by remember { mutableStateOf(dishData.updatedImageModel) }
 
     dishData.apply {
         dishNameText = dishData.name
         dishDescriptionText = dishData.description
+        updatedImageModel = dishData.updatedImageModel
     }
-
-    val pickPictureLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            if (uri != null) {
-                imageUri = uri
-                imageUriString = null
-            }
-        }
 
     LazyColumn(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {
             when (uiState) {
                 is ContentUiStates.Loading -> {
-                    Box(
-                        modifier = modifier.fillMaxSize(),
-                    ) {
-                        LinearProgressIndicator(
-                            modifier = modifier.fillMaxWidth()
-                        )
-                    }
+                    LinearProgressIndicator(
+                        modifier = modifier.fillMaxWidth()
+                    )
                 }
             }
+
             Spacer(modifier = modifier.height(24.dp))
 
-            ChooseImage(
+            ChooseImageItem(
                 height = 240.dp,
                 width = 240.dp,
                 corner = 24.dp,
-                uri = if (imageUriString != null) Uri.parse(imageUriString) else imageUri,
-                uiState = uiState,
-                onChoosePicture = {
-                    pickPictureLauncher.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly
-                        )
-                    )
-                },
+                uri = imageModel ?: updatedImageModel,
+                enabled = uiState is ContentUiStates.Show,
+                editButtonEnabled = updatedImageModel != null,
+                onChoosePicture = { onChooseNewImage() },
                 onClearPicture = {
-                    imageUri = null
-                    imageUriString = null
-                }
-            )
-            Spacer(modifier = modifier.height(24.dp))
-
-            imageUri?.let { uri ->
-                OutlinedButton(
-                    onClick = {
-                        Log.d("DAVAI", "image uri $uri")
-                        onOpenDishNameDialog(uri)
-//                        eventHandler(ContentUiEvents.GenerateTextUsingGemini(uri))
+                    imageModel = null
+                    updatedImageModel = null
+                },
+                onEditPicture = {
+                    eventHandler(ContentUiEvents.SetNamePriceWeightDescription(
+                        name = dishNameText,
+                        price = dishPriceText,
+                        weight = dishWeightText,
+                        description = dishDescriptionText,
+                    ))
+                    updatedImageModel?.let { bitmap ->
+                        onEditNewImage(bitmap)
                     }
-                ) {
-                    Text(text = "Generate text using AI")
-                }
-            }
+                },
+            )
             Spacer(modifier = modifier.height(24.dp))
 
             OutlinedTextField(
@@ -121,6 +105,7 @@ internal fun EditDishView(
                     dishNameText = text
                 },
                 label = { Text(text = "Name") },
+                enabled = (uiState is ContentUiStates.Show),
                 shape = RoundedCornerShape(24.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 trailingIcon = {
@@ -130,7 +115,8 @@ internal fun EditDishView(
                         }
                 },
             )
-            Spacer(modifier = modifier.height(24.dp))
+
+            Spacer(modifier = modifier.height(16.dp))
 
             OutlinedTextField(
                 value = dishPriceText,
@@ -148,14 +134,42 @@ internal fun EditDishView(
                 },
                 enabled = (uiState is ContentUiStates.Show)
             )
-            Spacer(modifier = modifier.height(24.dp))
+
+            if (dishNameText.isNotEmpty()) {
+                updatedImageModel?.let { image ->
+                    Spacer(modifier = modifier.height(16.dp))
+
+                    OutlinedButton(
+                        onClick = {
+                            eventHandler(ContentUiEvents.SetNamePriceWeightDescription(
+                                name = dishNameText,
+                                price = dishPriceText,
+                                weight = dishWeightText,
+                                description = dishDescriptionText,
+                            ))
+                            eventHandler(
+                                ContentUiEvents.GenerateDescriptionOfDish(
+                                    imageBitmap = image,
+                                    dishName = dishNameText,
+                                )
+                            )
+                        },
+                        enabled = (uiState is ContentUiStates.Show)
+                    ) {
+                        Text(text = "Generate AI description")
+                    }
+                }
+            }
+
+            Spacer(modifier = modifier.height(16.dp))
 
             OutlinedTextField(
                 value = dishDescriptionText,
                 onValueChange = { text: String ->
                     dishDescriptionText = text
                 },
-                label = { Text(text = "Name") },
+                label = { Text(text = "Description") },
+                enabled = (uiState is ContentUiStates.Show),
                 shape = RoundedCornerShape(24.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 trailingIcon = {
@@ -165,27 +179,31 @@ internal fun EditDishView(
                         }
                 },
             )
+
             Spacer(modifier = modifier.height(24.dp))
 
-            CancelAndSaveButtons(
+            CancelAndAcceptButtons(
                 onCancel = {
                     eventHandler(ContentUiEvents.GoBack)
                 },
-                onSave = {
+                onAccept = {
                     eventHandler(
                         ContentUiEvents.SaveDishItem(
-                            dishData = DishData(
+                            DishData(
                                 id = dishData.id,
                                 name = dishNameText,
-                                price = dishPriceText.toDouble(),
                                 description = dishDescriptionText,
-                                image = dishData.image
-                            ),
-                            imageUri = imageUri,
+                                price = dishPriceText.toDouble(),
+                                weight = dishWeightText.toDouble(),
+                                imageModel = imageModel,
+                                updatedImageModel = updatedImageModel,
+                            )
                         )
                     )
                 },
-                uiState = uiState,
+                isEnable = (uiState is ContentUiStates.Show),
+                cancelText = "Cancel",
+                acceptText = "Save",
             )
         }
     }
