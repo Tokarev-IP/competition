@@ -1,12 +1,16 @@
 package com.example.catalog.content.data.di
 
+import com.example.catalog.content.data.interfaces.FirebaseStorageDeleteInterface
 import com.example.catalog.content.data.interfaces.FirebaseStorageDownloadInterface
 import com.example.catalog.content.data.interfaces.FirebaseStorageUploadInterface
+import com.example.catalog.content.data.interfaces.FirestoreDeleteInterface
 import com.example.catalog.content.data.interfaces.FirestoreDownloadInterface
 import com.example.catalog.content.data.interfaces.FirestoreUploadInterface
 import com.example.catalog.content.data.interfaces.GeminiAiInterface
+import com.example.catalog.content.data.repositories.FirebaseStorageDeleteRepository
 import com.example.catalog.content.data.repositories.FirebaseStorageDownloadRepository
 import com.example.catalog.content.data.repositories.FirebaseStorageUploadRepository
+import com.example.catalog.content.data.repositories.FirestoreDeleteRepository
 import com.example.catalog.content.data.repositories.FirestoreDownloadRepository
 import com.example.catalog.content.data.repositories.FirestoreUploadRepository
 import com.example.catalog.content.data.repositories.GeminiAiRepository
@@ -39,5 +43,13 @@ interface ContentModule {
     @Singleton
     @Binds
     fun bindGeminiAiInterface(impl: GeminiAiRepository): GeminiAiInterface
+
+    @Singleton
+    @Binds
+    fun bindFirebaseStorageDeleteInterface(impl: FirebaseStorageDeleteRepository): FirebaseStorageDeleteInterface
+
+    @Singleton
+    @Binds
+    fun bindFirestoreDeleteInterface(impl: FirestoreDeleteRepository): FirestoreDeleteInterface
 
 }

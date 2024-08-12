@@ -1,5 +1,6 @@
 package com.example.catalog.login.presentation
 
+import android.util.Log
 import com.example.catalog.content.presentation.base.BaseViewModel
 import com.example.catalog.login.data.PhoneAuthProviderCallback
 import com.example.catalog.login.domain.interfaces.PhoneAuthUseCaseInterface
@@ -13,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val phoneAuthUseCaseInterface: PhoneAuthUseCaseInterface,
-) : BaseViewModel<LoginUiStates, LoginUiIntents, LoginUiEvents>(LoginUiStates.Show) {
+) : BaseViewModel<LoginUiStates, LoginUiIntents, LoginUiEvents>(LoginUiStates.Loading) {
 
     override fun setUiEvent(uiEvent: LoginUiEvents) {
         when (uiEvent) {
@@ -29,9 +30,7 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginUiEvents.LoginWithGoogle -> {
-                setUiState(LoginUiStates.Loading)
-                //todo login with google
-                setUiState(LoginUiStates.Show)
+
             }
 
             is LoginUiEvents.SendLoginSmsCode -> {
@@ -90,9 +89,9 @@ class LoginViewModel @Inject constructor(
         phoneAuthUseCaseInterface.getCurrentUser(
             onUserExists = {
                 setUiIntent(LoginUiIntents.GoToContentActivity)
-                setUiState(LoginUiStates.Show)
             },
             onUserDoesNotExist = {
+                setUiIntent(LoginUiIntents.GoToLoginChooseScreen)
                 setUiState(LoginUiStates.Show)
             }
         )

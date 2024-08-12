@@ -3,6 +3,7 @@ package com.example.catalog.content.presentation.views
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -28,15 +28,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.presentation.ContentUiEvents
-import com.example.catalog.content.presentation.ContentUiIntents
-import com.example.catalog.content.presentation.ContentUiStates
 import com.example.catalog.content.presentation.common.CancelAndAcceptButtons
 import com.example.catalog.content.presentation.common.ChooseImageItem
 
 @Composable
 internal fun EditDishView(
     modifier: Modifier = Modifier,
-    uiState: ContentUiStates,
+    isEnabled: Boolean = true,
     eventHandler: (ContentUiEvents) -> Unit,
     dishData: DishData,
     innerPadding: PaddingValues,
@@ -63,14 +61,6 @@ internal fun EditDishView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {
-            when (uiState) {
-                is ContentUiStates.Loading -> {
-                    LinearProgressIndicator(
-                        modifier = modifier.fillMaxWidth()
-                    )
-                }
-            }
-
             Spacer(modifier = modifier.height(24.dp))
 
             ChooseImageItem(
@@ -78,20 +68,32 @@ internal fun EditDishView(
                 width = 240.dp,
                 corner = 24.dp,
                 uri = imageModel ?: updatedImageModel,
-                enabled = uiState is ContentUiStates.Show,
-                editButtonEnabled = updatedImageModel != null,
-                onChoosePicture = { onChooseNewImage() },
+                enabled = isEnabled,
+                editButtonEnabled = updatedImageModel != null && isEnabled,
+                onChoosePicture = {
+                    eventHandler(
+                        ContentUiEvents.SetNamePriceWeightDescription(
+                            name = dishNameText,
+                            price = dishPriceText,
+                            weight = dishWeightText,
+                            description = dishDescriptionText,
+                        )
+                    )
+                    onChooseNewImage()
+                },
                 onClearPicture = {
                     imageModel = null
                     updatedImageModel = null
                 },
                 onEditPicture = {
-                    eventHandler(ContentUiEvents.SetNamePriceWeightDescription(
-                        name = dishNameText,
-                        price = dishPriceText,
-                        weight = dishWeightText,
-                        description = dishDescriptionText,
-                    ))
+                    eventHandler(
+                        ContentUiEvents.SetNamePriceWeightDescription(
+                            name = dishNameText,
+                            price = dishPriceText,
+                            weight = dishWeightText,
+                            description = dishDescriptionText,
+                        )
+                    )
                     updatedImageModel?.let { bitmap ->
                         onEditNewImage(bitmap)
                     }
@@ -100,12 +102,16 @@ internal fun EditDishView(
             Spacer(modifier = modifier.height(24.dp))
 
             OutlinedTextField(
+                modifier = modifier
+                    .fillMaxHeight(0.9f)
+                    .padding(horizontal = 12.dp),
                 value = dishNameText,
                 onValueChange = { text: String ->
-                    dishNameText = text
+                    if (text.length <= 60)
+                        dishNameText = text
                 },
                 label = { Text(text = "Name") },
-                enabled = (uiState is ContentUiStates.Show),
+                enabled = isEnabled,
                 shape = RoundedCornerShape(24.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 trailingIcon = {
@@ -119,9 +125,13 @@ internal fun EditDishView(
             Spacer(modifier = modifier.height(16.dp))
 
             OutlinedTextField(
+                modifier = modifier
+                    .fillMaxHeight(0.9f)
+                    .padding(horizontal = 12.dp),
                 value = dishPriceText,
                 onValueChange = { text: String ->
-                    dishPriceText = text
+                    if (text.length <= 10)
+                        dishPriceText = text
                 },
                 label = { Text(text = "Price") },
                 shape = RoundedCornerShape(24.dp),
@@ -132,7 +142,7 @@ internal fun EditDishView(
                             Icon(Icons.Default.Clear, "Clear text")
                         }
                 },
-                enabled = (uiState is ContentUiStates.Show)
+                enabled = isEnabled
             )
 
             if (dishNameText.isNotEmpty()) {
@@ -141,12 +151,14 @@ internal fun EditDishView(
 
                     OutlinedButton(
                         onClick = {
-                            eventHandler(ContentUiEvents.SetNamePriceWeightDescription(
-                                name = dishNameText,
-                                price = dishPriceText,
-                                weight = dishWeightText,
-                                description = dishDescriptionText,
-                            ))
+                            eventHandler(
+                                ContentUiEvents.SetNamePriceWeightDescription(
+                                    name = dishNameText,
+                                    price = dishPriceText,
+                                    weight = dishWeightText,
+                                    description = dishDescriptionText,
+                                )
+                            )
                             eventHandler(
                                 ContentUiEvents.GenerateDescriptionOfDish(
                                     imageBitmap = image,
@@ -154,7 +166,7 @@ internal fun EditDishView(
                                 )
                             )
                         },
-                        enabled = (uiState is ContentUiStates.Show)
+                        enabled = isEnabled
                     ) {
                         Text(text = "Generate AI description")
                     }
@@ -164,12 +176,16 @@ internal fun EditDishView(
             Spacer(modifier = modifier.height(16.dp))
 
             OutlinedTextField(
+                modifier = modifier
+                    .fillMaxHeight(0.9f)
+                    .padding(horizontal = 12.dp),
                 value = dishDescriptionText,
                 onValueChange = { text: String ->
-                    dishDescriptionText = text
+                    if (text.length <= 400)
+                        dishDescriptionText = text
                 },
                 label = { Text(text = "Description") },
-                enabled = (uiState is ContentUiStates.Show),
+                enabled = isEnabled,
                 shape = RoundedCornerShape(24.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 trailingIcon = {
@@ -191,8 +207,8 @@ internal fun EditDishView(
                         ContentUiEvents.SaveDishItem(
                             DishData(
                                 id = dishData.id,
-                                name = dishNameText,
-                                description = dishDescriptionText,
+                                name = dishNameText.trim(),
+                                description = dishDescriptionText.trim(),
                                 price = dishPriceText.toDouble(),
                                 weight = dishWeightText.toDouble(),
                                 imageModel = imageModel,
@@ -201,10 +217,12 @@ internal fun EditDishView(
                         )
                     )
                 },
-                isEnable = (uiState is ContentUiStates.Show),
+                isEnable = isEnabled,
                 cancelText = "Cancel",
                 acceptText = "Save",
+                isAcceptEnabled = dishNameText.isNotEmpty() && dishPriceText.isNotEmpty() && dishDescriptionText.isNotEmpty()
             )
+            Spacer(modifier = modifier.height(24.dp))
         }
     }
 }

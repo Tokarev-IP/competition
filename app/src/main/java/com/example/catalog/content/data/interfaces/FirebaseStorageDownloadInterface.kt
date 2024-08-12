@@ -1,6 +1,7 @@
 package com.example.catalog.content.data.interfaces
 
 import android.net.Uri
+import com.google.firebase.storage.StorageMetadata
 
 interface FirebaseStorageDownloadInterface {
 
@@ -15,4 +16,11 @@ interface FirebaseStorageDownloadInterface {
         onSuccess: (byteArray: ByteArray) -> Unit,
         onFailure: (e: Exception) -> Unit,
     )
+
+    fun getMetadataOfFile(
+        pathString: String,
+        onSuccess: (metadata: StorageMetadata) -> Unit,
+        onFailure: (e: Exception) -> Unit,
+    )
+
 }

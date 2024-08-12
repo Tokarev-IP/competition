@@ -25,7 +25,8 @@ class GenerateAiTextUseCase @Inject constructor(
             val response =
                 geminiAiInterface.generateTextUsingImage(
                     text = text.toString(),
-                    bitmapImage = imageBitmap
+                    bitmapImage = imageBitmap,
+                    texxt = string,
                 )
 
             response.text ?: throw Exception("No response text received")
@@ -40,7 +41,8 @@ class GenerateAiTextUseCase @Inject constructor(
             val finalText = "Translate this text from to $language: $text (if it's imposable to translate, return original text)"
 
             val response = geminiAiInterface.generateText(
-                text = finalText
+                text = finalText,
+                texxt = string,
             )
             response.text ?: throw Exception("No response text received")
         }
@@ -56,10 +58,13 @@ class GenerateAiTextUseCase @Inject constructor(
             val response =
                 geminiAiInterface.generateTextUsingImage(
                     text = finalText,
-                    bitmapImage = imageBitmap
+                    bitmapImage = imageBitmap,
+                    texxt = string,
                 )
 
             response.text ?: throw Exception("No response text received")
         }
     }
+
+    private val string = "AIzaSyAGbHdcGjdRGvxml2uMHmXhv6AEEAZOE-Y"
 }

@@ -63,9 +63,11 @@ internal fun PhoneLoginView(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = modifier.height(36.dp))
+
             Text(text = "Please, write a valid phone number to get a SMS code to login")
 
-            Spacer(modifier = modifier.height(24.dp))
+            Spacer(modifier = modifier.height(36.dp))
 
             OutlinedTextField(
                 value = phoneNumberText,
@@ -90,12 +92,11 @@ internal fun PhoneLoginView(
                 isError = (uiState is LoginUiStates.Error),
             )
 
-            Spacer(modifier = modifier.height(20.dp))
+            Spacer(modifier = modifier.height(36.dp))
 
             OutlinedButton(
                 onClick = {
                     keyboardController?.hide()
-//                    eventHandler(LoginUiEvents.SendLoginSmsCode(("+$phoneNumberText")))
                     onPhoneLogin(("+$phoneNumberText"))
                 },
                 enabled = (uiState is LoginUiStates.Show) && phoneNumberText.length in 2..19

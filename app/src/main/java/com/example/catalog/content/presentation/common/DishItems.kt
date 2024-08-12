@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,18 +36,17 @@ import com.example.catalog.content.domain.data.DishData
 internal fun DishItem(
     modifier: Modifier = Modifier,
     dishData: DishData,
+    onCardClick: () -> Unit,
 ) {
     OutlinedCard(
         modifier = modifier.fillMaxWidth(),
-        onClick = {
-            //todo
-        }
+        onClick = { onCardClick() }
     ) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(12.dp),
+                .padding(24.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -74,7 +74,7 @@ internal fun DishItem(
                     .width(120.dp)
                     .clip(RoundedCornerShape(16.dp)),
                 model = dishData.imageModel ?: dishData.updatedImageModel,
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.FillHeight,
                 contentDescription = "Image of the dish",
             )
         }
@@ -85,18 +85,33 @@ internal fun DishItem(
 internal fun EditDishItem(
     modifier: Modifier = Modifier,
     dishData: DishData,
-    onClick: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onCardClick: () -> Unit,
+    isEnabled: Boolean = true,
 ) {
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
-        DishItem(dishData = dishData)
+        DishItem(
+            dishData = dishData,
+            onCardClick = { onCardClick() }
+        )
 
         IconButton(
             modifier = modifier.align(Alignment.TopEnd),
-            onClick = { onClick() }
+            onClick = { onEdit() },
+            enabled = isEnabled,
         ) {
             Icon(Icons.Filled.Edit, contentDescription = "Edit information of the dish")
+        }
+
+        IconButton(
+            modifier = modifier.align(Alignment.BottomEnd),
+            onClick = { onDelete() },
+            enabled = isEnabled,
+        ) {
+            Icon(Icons.Filled.Delete, contentDescription = "Delete the dish")
         }
     }
 }
@@ -114,7 +129,9 @@ fun EditDishItemPreview() {
             price = 14.80,
             weight = 350.0,
             updatedImageModel = bitmap,
-        )
-    ) {
-    }
+        ),
+        onEdit = {},
+        onDelete = {},
+        onCardClick = {}
+    )
 }

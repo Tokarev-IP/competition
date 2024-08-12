@@ -41,4 +41,5 @@ enum class LoginNavigationRoutes(val route: String) {
     LoginChooseScreen("LoginChooseScreen"),
     PhoneLoginScreen("PhoneLoginScreen"),
     PhoneCodeScreen("PhoneCodeScreen"),
+    StartDestination("StartDestination")
 }

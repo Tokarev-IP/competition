@@ -9,15 +9,15 @@ interface TransformImageUseCaseInterface {
         imageUri: Uri,
     ): Bitmap
 
-    suspend fun getByteArrayFromBitmapWithQuality(
+    suspend fun getByteArrayFromBitmap(
         bitmap: Bitmap,
         format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
-        quality: Int = 100
+        quality: Int = 100,
     ): ByteArray
 
     suspend fun compressBitmap(
         bitmap: Bitmap,
-        format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
-        quality: Int
+        format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
+        quality: Int = 100,
     ): Bitmap
 }

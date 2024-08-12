@@ -1,10 +1,12 @@
 package com.example.catalog.login.presentation
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -39,7 +42,7 @@ internal fun LoginActivityCompose(
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = LoginNavigationRoutes.LoginChooseScreen.route,
+    startDestination: String = LoginNavigationRoutes.StartDestination.route,
     onPhoneLogin: (phoneNumber: String) -> Unit
 ) {
     val uiIntent by loginViewModel.getUiIntentsFlow().collectAsState(initial = null)
@@ -66,6 +69,11 @@ internal fun LoginActivityCompose(
             navController.navigate(LoginNavigationRoutes.PhoneCodeScreen.route + "/${data}")
             loginViewModel.clearUiIntents()
         }
+
+        is LoginUiIntents.GoToLoginChooseScreen -> {
+            navController.navigate(LoginNavigationRoutes.LoginChooseScreen.route)
+            loginViewModel.clearUiIntents()
+        }
     }
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -89,19 +97,6 @@ internal fun LoginActivityCompose(
                 }
             }
         },
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Phone number") },
-                navigationIcon = {
-                    IconButton(onClick = { loginViewModel.setUiEvent(LoginUiEvents.GoBackNavigation) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Go back"
-                        )
-                    }
-                }
-            )
-        }
     ) { innerPadding ->
 
         NavHost(
@@ -111,6 +106,10 @@ internal fun LoginActivityCompose(
             navController = navController,
             startDestination = startDestination
         ) {
+            composable(route = LoginNavigationRoutes.StartDestination.route) {
+                StartDestination(loginViewModel = loginViewModel)
+            }
+            
             composable(route = LoginNavigationRoutes.LoginChooseScreen.route) {
                 LoginChooseScreen(loginViewModel = loginViewModel)
             }
@@ -139,5 +138,21 @@ internal fun LoginActivityCompose(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun StartDestination(
+    modifier: Modifier = Modifier,
+    loginViewModel: LoginViewModel,
+){
+    Box(modifier = modifier.fillMaxSize()) {
+        CircularProgressIndicator(
+            modifier = modifier.align(Alignment.Center)
+        )
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        loginViewModel.setUiEvent(LoginUiEvents.CheckUser)
     }
 }

@@ -22,7 +22,6 @@ class LabelImageUseCase {
                         val text = label.text
                         val confidence = label.confidence
                         val index = label.index
-                        Log.d("DAVAI", "labelImage: $text")
                     }
                 }
                 .addOnFailureListener { e ->

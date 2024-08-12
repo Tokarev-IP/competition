@@ -1,6 +1,5 @@
 package com.example.catalog.content.domain.usecases.logic
 
-import android.util.Log
 import com.google.mlkit.nl.languageid.LanguageIdentification
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -14,9 +13,7 @@ class IdentifyLanguageUseCase {
             languageIdentifier.identifyLanguage(text)
                 .addOnSuccessListener { languageCode ->
                     if (languageCode == "und") {
-                        Log.d("DAVAI", "Can't identify language.")
                     } else {
-                        Log.i("DAVAI", "Language: $languageCode")
                         continuation.resume(languageCode)
                     }
                 }

@@ -21,6 +21,7 @@ internal fun CancelAndAcceptButtons(
     isEnable: Boolean = true,
     cancelText: String,
     acceptText: String,
+    isAcceptEnabled: Boolean = true,
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -33,7 +34,7 @@ internal fun CancelAndAcceptButtons(
             }
             Spacer(modifier = modifier.width(48.dp))
             Button(
-                enabled = isEnable,
+                enabled = isAcceptEnabled,
                 onClick = { onAccept() }) {
                 Text(text = acceptText)
             }

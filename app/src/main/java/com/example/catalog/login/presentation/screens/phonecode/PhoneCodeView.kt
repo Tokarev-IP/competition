@@ -53,9 +53,9 @@ internal fun PhoneCodeView(
             }
         }
 
+        Spacer(modifier = modifier.height(60.dp))
         Text(text = "SMS code was sent.")
-
-        Spacer(modifier = modifier.height(24.dp))
+        Spacer(modifier = modifier.height(36.dp))
 
         OutlinedTextField(
             value = codeText,
@@ -79,7 +79,7 @@ internal fun PhoneCodeView(
             enabled = (uiState is LoginUiStates.Show),
         )
 
-        Spacer(modifier = modifier.height(24.dp))
+        Spacer(modifier = modifier.height(36.dp))
 
         OutlinedButton(
             onClick = {

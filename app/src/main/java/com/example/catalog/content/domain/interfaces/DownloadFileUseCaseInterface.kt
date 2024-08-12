@@ -20,4 +20,11 @@ interface DownloadFileUseCaseInterface {
         menuId: String,
         dishId: String,
     ): ByteArray
+
+    suspend fun checkIfDishImageExists(
+        pathString: String = "dish",
+        menuId: String,
+        dishId: String,
+    ): Boolean
+
 }

@@ -9,6 +9,7 @@ import com.google.firebase.firestore.firestore
 import javax.inject.Inject
 
 class FirestoreDownloadRepository @Inject constructor() : FirestoreDownloadInterface {
+
     private val db: FirebaseFirestore = Firebase.firestore
 
     override fun downloadDataFromOneCollection(

@@ -1,4 +1,4 @@
-package com.example.catalog.content.presentation.views
+package com.example.catalog.content.presentation.views.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

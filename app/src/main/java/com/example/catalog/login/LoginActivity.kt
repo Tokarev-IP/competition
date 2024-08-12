@@ -47,7 +47,6 @@ class LoginActivity : ComponentActivity() {
                         },
                         loginViewModel = loginViewModel,
                     )
-
             }
         }
 

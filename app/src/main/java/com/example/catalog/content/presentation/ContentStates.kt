@@ -20,11 +20,8 @@ sealed interface ContentUiEvents {
     data object CreateMenu : ContentUiEvents
     data object CheckMenuId : ContentUiEvents
     class GenerateDescriptionOfDish(val imageBitmap: Bitmap, val dishName: String) : ContentUiEvents
-    class SetNewDishImageFromGallery(val imageUri: Uri) : ContentUiEvents
-    class SetUpdatedImage(val bitmap: Bitmap) : ContentUiEvents
     class SetInitialImage(val imageUri: Uri) : ContentUiEvents
     class CreateUpdatedImage(val imageBitmap: Bitmap) : ContentUiEvents
-    class SegmentImage(val imageUri: Uri) : ContentUiEvents
     class SaveMenuAsDocFile(val folderUri: Uri, val language: String? = null) : ContentUiEvents
     class SetNamePriceWeightDescription(
         val name: String,
@@ -32,17 +29,15 @@ sealed interface ContentUiEvents {
         val description: String,
         val weight: String,
     ) : ContentUiEvents
+    class DeleteDish(val dishData: DishData) : ContentUiEvents
 }
 
 interface ContentUiIntents {
     data object GoToEditDishScreen : ContentUiIntents
-    data object GoToEditInfoScreen : ContentUiIntents
     data object GoBackNavigation : ContentUiIntents
     data object GoToMenuListScreen : ContentUiIntents
-    data object GoToCheckMenuScreen : ContentUiIntents
+    data object GoToCreateMenuScreen : ContentUiIntents
     class ShowSnackBarMsg(val msg: String) : ContentUiIntents
-    class PutUpdatedBitmapImage(val bitmap: Bitmap) : ContentUiIntents
-    class GoToUpdateDishImageScreen(val imageUriString: String) : ContentUiIntents
 }
 
 interface ScreenRoutes {
@@ -50,16 +45,13 @@ interface ScreenRoutes {
     data object EditDishScreen : ScreenRoutes
 
     @Serializable
-    data object EditInfoScreen : ScreenRoutes
-
-    @Serializable
     data object MenuListScreen : ScreenRoutes
 
     @Serializable
-    data object CheckMenuScreen : ScreenRoutes
+    data object CreateMenuScreen : ScreenRoutes
 
     @Serializable
-    class UpdateDishImageScreen(val imageUriString: String) : ScreenRoutes
+    data object LoadingScreen: ScreenRoutes
 }
 
 enum class LanguageList(

@@ -1,6 +1,5 @@
 package com.example.catalog.content.domain.functions
 
-import android.content.Context
 import android.net.Uri
 import com.example.catalog.content.domain.data.DocDishData
 
@@ -11,7 +10,6 @@ interface CreateDocFileInterface {
         language: String = "",
         filename: String = "menu_doc_${language}.docx",
         dishList: List<DocDishData>,
-        context: Context,
     )
 
 }

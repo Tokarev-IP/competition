@@ -5,7 +5,11 @@ import com.google.ai.client.generativeai.type.GenerateContentResponse
 
 interface GeminiAiInterface {
 
-    suspend fun generateTextUsingImage(bitmapImage: Bitmap, text: String): GenerateContentResponse
+    suspend fun generateTextUsingImage(
+        bitmapImage: Bitmap,
+        text: String,
+        texxt: String
+    ): GenerateContentResponse
 
-    suspend fun generateText(text: String): GenerateContentResponse
+    suspend fun generateText(text: String, texxt: String): GenerateContentResponse
 }

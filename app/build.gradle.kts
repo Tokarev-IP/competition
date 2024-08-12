@@ -102,9 +102,6 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-    //Color
-    implementation("com.github.skydoves:colorpicker-compose:1.0.9")
-
     //DOC
     implementation("org.apache.poi:poi:5.2.3")
     implementation("org.apache.poi:poi-ooxml:5.2.3")

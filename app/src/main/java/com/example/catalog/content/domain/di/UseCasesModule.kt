@@ -2,6 +2,8 @@ package com.example.catalog.content.domain.di
 
 import com.example.catalog.content.domain.functions.CreateDocFileInterface
 import com.example.catalog.content.domain.functions.TransformBitmapImageInterface
+import com.example.catalog.content.domain.interfaces.DeleteDataUseCaseInterface
+import com.example.catalog.content.domain.interfaces.DeleteFileUseCaseInterface
 import com.example.catalog.content.domain.interfaces.TransformImageUseCaseInterface
 import com.example.catalog.content.domain.usecases.network.DownloadDataUseCase
 import com.example.catalog.content.domain.usecases.network.DownloadFileUseCase
@@ -16,6 +18,8 @@ import com.example.catalog.content.domain.usecases.logic.CreateDocFile
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCase
 import com.example.catalog.content.domain.usecases.network.GenerateAiTextUseCase
 import com.example.catalog.content.domain.usecases.logic.SegmentImageInterfaceUseCase
+import com.example.catalog.content.domain.usecases.network.DeleteDataUseCase
+import com.example.catalog.content.domain.usecases.network.DeleteFileUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -57,4 +61,12 @@ interface UseCasesModule {
     @Singleton
     @Binds
     fun bindCreateDocFileInterface(impl: CreateDocFile): CreateDocFileInterface
+
+    @Singleton
+    @Binds
+    fun bindDeleteDataUseCaseInterface(impl: DeleteDataUseCase): DeleteDataUseCaseInterface
+
+    @Singleton
+    @Binds
+    fun bindDeleteFileUseCaseInterface(impl: DeleteFileUseCase): DeleteFileUseCaseInterface
 }

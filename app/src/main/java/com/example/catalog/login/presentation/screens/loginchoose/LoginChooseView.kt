@@ -76,15 +76,6 @@ internal fun LoginChooseView(
             }
 
             Spacer(modifier = modifier.height(24.dp))
-
-            OutlinedButton(
-                onClick = {
-                    eventHandler(LoginUiEvents.LoginWithGoogle)
-                },
-                enabled = (uiState is LoginUiStates.Show)
-            ) {
-                Text(text = "Login with Google")
-            }
         }
     }
 }

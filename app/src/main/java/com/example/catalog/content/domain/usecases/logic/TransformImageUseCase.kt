@@ -23,10 +23,10 @@ class TransformImageUseCase @Inject constructor(
         }
     }
 
-    override suspend fun getByteArrayFromBitmapWithQuality(
+    override suspend fun getByteArrayFromBitmap(
         bitmap: Bitmap,
         format: Bitmap.CompressFormat,
-        quality: Int
+        quality: Int,
     ): ByteArray {
         return suspendCancellableCoroutine { continuation ->
             val byteArrayOutputStream = ByteArrayOutputStream()
@@ -53,6 +53,5 @@ class TransformImageUseCase @Inject constructor(
              continuation.resume(compressedBitmap)
          }
     }
-
 
 }

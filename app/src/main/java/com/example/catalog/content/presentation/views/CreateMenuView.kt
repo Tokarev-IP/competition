@@ -20,7 +20,7 @@ import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiStates
 
 @Composable
-internal fun CheckMenuView(
+internal fun CreateMenuView(
     modifier: Modifier = Modifier,
     eventHandler: (ContentUiEvents) -> Unit,
     uiState: ContentUiStates,
@@ -38,8 +38,8 @@ internal fun CheckMenuView(
             }
 
             is ContentUiStates.Show -> {
-                Text(text = "There is not a menu. Please, push the button to create one")
-                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = "There is no any menu. Please, push the button to create one")
+                Spacer(modifier = Modifier.height(20.dp))
                 OutlinedButton(
                     onClick = {
                         eventHandler(ContentUiEvents.CreateMenu)
@@ -49,10 +49,8 @@ internal fun CheckMenuView(
             }
 
             is ContentUiStates.Error -> {
-                Text(text = "There are some connection problems")
-                Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Please, try again")
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 OutlinedButton(
                     onClick = {
                         eventHandler(ContentUiEvents.CheckMenuId)
