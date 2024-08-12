@@ -71,7 +71,7 @@ internal fun DishItem(
             AsyncImage(
                 modifier = modifier
                     .height(100.dp)
-                    .width(120.dp)
+                    .width(140.dp)
                     .clip(RoundedCornerShape(16.dp)),
                 model = dishData.imageModel ?: dishData.updatedImageModel,
                 contentScale = ContentScale.FillHeight,

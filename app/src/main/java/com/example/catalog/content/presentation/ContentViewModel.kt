@@ -139,7 +139,7 @@ class ContentViewModel @Inject constructor(
                     val compressedBitmap = withContext(Dispatchers.Default) {
                         transformImageUseCaseInterface.compressBitmap(
                             bitmap = bitmap,
-                            quality = 15,
+                            quality = 80,
                         )
                     }
                     val dishData = dishItemData.value.copy(updatedImageModel = compressedBitmap)
@@ -215,7 +215,6 @@ class ContentViewModel @Inject constructor(
                     downloadDataUseCaseInterface.downloadMenuId(userId = userId)
                 }
                 if (data == null) {
-                    setUiIntent(ContentUiIntents.GoToCreateMenuScreen)
                     setUiState(ContentUiStates.Show)
                 }
                 else {
@@ -256,7 +255,6 @@ class ContentViewModel @Inject constructor(
                     )
                 }
                 menuIdVM = menuId
-                setUiState(ContentUiStates.Show)
                 setUiIntent(ContentUiIntents.GoToMenuListScreen)
             } catch (e: Exception) {
                 setUiState(ContentUiStates.Error)

@@ -49,9 +49,6 @@ interface ScreenRoutes {
 
     @Serializable
     data object CreateMenuScreen : ScreenRoutes
-
-    @Serializable
-    data object LoadingScreen: ScreenRoutes
 }
 
 enum class LanguageList(

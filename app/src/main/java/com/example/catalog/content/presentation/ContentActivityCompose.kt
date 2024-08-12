@@ -50,7 +50,7 @@ fun ContentActivityCompose(
 
         is ContentUiIntents.GoToCreateMenuScreen -> {
             navController.navigate(ScreenRoutes.CreateMenuScreen) {
-                popUpTo(ScreenRoutes.LoadingScreen) { inclusive = true }
+                popUpTo(ScreenRoutes.MenuListScreen) { inclusive = true }
             }
             contentViewModel.clearUiIntents()
         }
