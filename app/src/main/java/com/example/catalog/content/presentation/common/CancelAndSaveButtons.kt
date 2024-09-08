@@ -11,17 +11,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
 internal fun CancelAndAcceptButtons(
     modifier: Modifier = Modifier,
-    onCancel: () -> Unit,
-    onAccept: () -> Unit,
+    onCancel: () -> Unit = {},
+    onAccept: () -> Unit = {},
     isEnable: Boolean = true,
     cancelText: String,
     acceptText: String,
-    isAcceptEnabled: Boolean = true,
+    isAcceptButtonEnabled: Boolean = true,
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -34,10 +35,19 @@ internal fun CancelAndAcceptButtons(
             }
             Spacer(modifier = modifier.width(48.dp))
             Button(
-                enabled = isAcceptEnabled,
+                enabled = isAcceptButtonEnabled && isEnable,
                 onClick = { onAccept() }) {
                 Text(text = acceptText)
             }
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun CancelAndAcceptButtonsPreview() {
+    CancelAndAcceptButtons(
+        cancelText = "Cancel",
+        acceptText = "Save",
+    )
 }

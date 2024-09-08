@@ -4,7 +4,7 @@ import com.example.catalog.content.data.interfaces.FirestoreUploadInterface
 import com.example.catalog.content.domain.data.DishDataFirebase
 import com.example.catalog.content.domain.data.MenuIdFirebase
 import com.example.catalog.content.domain.data.MenuInfoFirebase
-import com.example.catalog.content.domain.interfaces.UploadDataUseCaseInterface
+import com.example.catalog.content.domain.data.SectionDataFirebase
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -77,4 +77,58 @@ class UploadDataUseCase @Inject constructor(
             )
         }
     }
+
+    override suspend fun uploadMenuSection(
+        collection1: String,
+        collection2: String,
+        data: SectionDataFirebase,
+        menuId: String,
+        documentId: String
+    ) {
+        return suspendCancellableCoroutine { continuation ->
+            firestoreAddInterface.uploadTwoCollectionData(
+                data = data,
+                collection1 = collection1,
+                collection2 = collection2,
+                documentPath = menuId,
+                documentId = documentId,
+                onSuccess = {
+                    continuation.resume(Unit)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
+}
+
+interface UploadDataUseCaseInterface {
+    suspend fun uploadMenuId(
+        collection: String = "id",
+        userId: String,
+        menuIdFirebase: MenuIdFirebase,
+    )
+
+    suspend fun uploadMenuInfoData(
+        collection: String = "menu",
+        data: MenuInfoFirebase,
+        menuId: String,
+    )
+
+    suspend fun uploadMenuDishData(
+        collection1: String = "data",
+        collection2: String = "menu",
+        data: DishDataFirebase,
+        menuId: String,
+        documentId: String,
+    )
+
+    suspend fun uploadMenuSection(
+        collection1: String = "data",
+        collection2: String = "section",
+        data: SectionDataFirebase,
+        menuId: String,
+        documentId: String,
+    )
 }

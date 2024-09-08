@@ -2,7 +2,6 @@ package com.example.catalog.content.domain.usecases.network
 
 import android.graphics.Bitmap
 import com.example.catalog.content.data.interfaces.GeminiAiInterface
-import com.example.catalog.content.domain.interfaces.GenerateAiTextUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -38,7 +37,8 @@ class GenerateAiTextUseCase @Inject constructor(
         language: String,
     ): String {
         return withContext(Dispatchers.IO) {
-            val finalText = "Translate this text from to $language: $text (if it's imposable to translate, return original text)"
+            val finalText =
+                "Translate this text from to $language: $text (if it's imposable to translate, return original text)"
 
             val response = geminiAiInterface.generateText(
                 text = finalText,
@@ -53,7 +53,8 @@ class GenerateAiTextUseCase @Inject constructor(
         dishName: String,
     ): String {
         return withContext(Dispatchers.IO) {
-            val finalText = "Having this image and name of the dish - ${dishName}; generate a description of the dish for a menu"
+            val finalText =
+                "Having this image and name of the dish - ${dishName}; generate a description of the dish for a menu"
 
             val response =
                 geminiAiInterface.generateTextUsingImage(
@@ -67,4 +68,21 @@ class GenerateAiTextUseCase @Inject constructor(
     }
 
     private val string = "AIzaSyAGbHdcGjdRGvxml2uMHmXhv6AEEAZOE-Y"
+}
+
+interface GenerateAiTextUseCaseInterface {
+    suspend fun generateFunnyNameOfDishUsingImage(
+        imageBitmap: Bitmap,
+        parameters: List<String?>,
+    ): String
+
+    suspend fun translateText(
+        text: String,
+        language: String,
+    ): String
+
+    suspend fun generateAiDescriptionOfDish(
+        imageBitmap: Bitmap,
+        dishName: String,
+    ): String
 }

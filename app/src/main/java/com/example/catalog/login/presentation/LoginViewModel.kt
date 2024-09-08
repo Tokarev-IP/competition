@@ -1,9 +1,8 @@
 package com.example.catalog.login.presentation
 
-import android.util.Log
-import com.example.catalog.content.presentation.base.BaseViewModel
 import com.example.catalog.login.data.PhoneAuthProviderCallback
 import com.example.catalog.login.domain.interfaces.PhoneAuthUseCaseInterface
+import com.example.catalog.login.presentation.base.LoginBaseViewModel
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
@@ -14,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val phoneAuthUseCaseInterface: PhoneAuthUseCaseInterface,
-) : BaseViewModel<LoginUiStates, LoginUiIntents, LoginUiEvents>(LoginUiStates.Loading) {
+) : LoginBaseViewModel<LoginUiStates, LoginUiIntents, LoginUiEvents>(LoginUiStates.Loading) {
 
     override fun setUiEvent(uiEvent: LoginUiEvents) {
         when (uiEvent) {

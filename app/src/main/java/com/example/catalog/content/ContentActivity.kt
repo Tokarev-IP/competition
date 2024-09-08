@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.lifecycle.ViewModelProvider
 import com.example.catalog.content.presentation.ContentActivityCompose
-import com.example.catalog.content.presentation.ContentViewModel
+import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 import com.example.catalog.content.ui.theme.CatalogTheme
 import dagger.hilt.android.AndroidEntryPoint
 

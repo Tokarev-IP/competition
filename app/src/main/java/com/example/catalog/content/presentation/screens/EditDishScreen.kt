@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
-import com.example.catalog.content.presentation.ContentViewModel
+import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 import com.example.catalog.content.presentation.views.EditDishView
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,12 +1,10 @@
 package com.example.catalog.content.presentation.screens
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
@@ -43,14 +41,14 @@ import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
-import com.example.catalog.content.presentation.ContentViewModel
-import com.example.catalog.content.presentation.views.MenuListView
+import com.example.catalog.content.presentation.viewmodel.ContentViewModel
+import com.example.catalog.content.presentation.views.DishListView
 import com.example.catalog.content.presentation.views.dialogs.ChooseLanguageDialogView
 import com.example.catalog.content.presentation.views.dialogs.DishReviewDialogView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun MenuListScreen(
+internal fun DishListScreen(
     contentViewModel: ContentViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -117,7 +115,7 @@ internal fun MenuListScreen(
                             onDismissRequest = { isMenuExpanded = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Save menu as DOC file") },
+                                text = { Text("Save menu as PDF file") },
                                 onClick = {
                                     isMenuExpanded = false
                                     selectedLanguage = null
@@ -126,7 +124,7 @@ internal fun MenuListScreen(
                                 enabled = (uiState is ContentUiStates.Show),
                             )
                             DropdownMenuItem(
-                                text = { Text("Save translated menu as DOC file") },
+                                text = { Text("Save translated menu as PDF file") },
                                 onClick = {
                                     isMenuExpanded = false
                                     isOpenedLanguageDialog = true
@@ -159,7 +157,7 @@ internal fun MenuListScreen(
             }
 
             is ContentUiStates.Show -> {
-                MenuListView(
+                DishListView(
                     dishList = dishList,
                     eventHandler = { contentUiEvents: ContentUiEvents ->
                         contentViewModel.setUiEvent(contentUiEvents)
@@ -188,9 +186,9 @@ internal fun MenuListScreen(
         }
     }
 
-    LaunchedEffect(key1 = Unit) {
-        contentViewModel.setUiEvent(ContentUiEvents.DownloadMenuList)
-    }
+//    LaunchedEffect(key1 = Unit) {
+//        contentViewModel.setUiEvent(ContentUiEvents.DownloadMenuList)
+//    }
 
     if (isOpenedLanguageDialog)
         BasicAlertDialog(onDismissRequest = { isOpenedLanguageDialog = false }) {

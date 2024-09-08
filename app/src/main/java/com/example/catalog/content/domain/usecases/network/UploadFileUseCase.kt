@@ -1,7 +1,6 @@
 package com.example.catalog.content.domain.usecases.network
 
 import com.example.catalog.content.data.repositories.FirebaseStorageUploadRepository
-import com.example.catalog.content.domain.interfaces.UploadFileUseCaseInterface
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -49,4 +48,19 @@ class UploadFileUseCase @Inject constructor(
             )
         }
     }
+}
+
+interface UploadFileUseCaseInterface {
+    suspend fun uploadMenuPictureUsingByteArray(
+        pathString: String = "pic",
+        menuId: String,
+        byteArray: ByteArray,
+    )
+
+    suspend fun uploadDishPictureUsingByteArray(
+        pathString: String = "dish",
+        menuId: String,
+        dishId: String,
+        byteArray: ByteArray,
+    )
 }

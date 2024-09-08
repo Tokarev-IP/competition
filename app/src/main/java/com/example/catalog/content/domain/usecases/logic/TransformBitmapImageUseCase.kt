@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import com.example.catalog.content.domain.functions.TransformBitmapImageInterface
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentationResult
@@ -20,9 +19,9 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class SegmentImageInterfaceUseCase @Inject constructor(
+class TransformBitmapImageUseCase @Inject constructor(
     @ApplicationContext private val appContext: Context,
-) : TransformBitmapImageInterface {
+) : TransformBitmapImageUseCaseInterface {
 
     private suspend fun segmentImage(inputImage: InputImage): Bitmap {
         return suspendCancellableCoroutine { continuation ->
@@ -134,9 +133,27 @@ class SegmentImageInterfaceUseCase @Inject constructor(
         }
 
         if (minX < maxX && minY < maxY) {
-            return Bitmap.createBitmap(bitmap, minX-20, minY-20, maxX - minX + 40, maxY - minY + 40)
+            return Bitmap.createBitmap(
+                bitmap,
+                minX - 20,
+                minY - 20,
+                maxX - minX + 40,
+                maxY - minY + 40
+            )
         }
 
         return bitmap
     }
+}
+
+interface TransformBitmapImageUseCaseInterface {
+    suspend fun segmentImageFromUri(uri: Uri): Bitmap
+
+    suspend fun segmentImageFromBitmap(bitmap: Bitmap): Bitmap
+
+    suspend fun saveBitmapToGallery(bitmap: Bitmap)
+
+    suspend fun addBackgroundToBitmap(foreground: Bitmap, color: Int): Bitmap
+
+    suspend fun cropBitmapToForeground(bitmap: Bitmap): Bitmap
 }

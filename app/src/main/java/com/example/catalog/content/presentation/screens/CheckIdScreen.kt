@@ -7,22 +7,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.viewmodel.ContentViewModel
-import com.example.catalog.content.presentation.views.CreateMenuView
+import com.example.catalog.content.presentation.views.CheckIdView
 
 @Composable
-internal fun CreateMenuScreen(
+internal fun CheckIdScreen(
     contentViewModel: ContentViewModel,
 ) {
     val uiState by contentViewModel.getUiStatesFlow().collectAsState()
 
     Scaffold { innerPadding ->
-        CreateMenuView(
-            eventHandler = { contentUiEvents: ContentUiEvents ->
-                contentViewModel.setUiEvent(contentUiEvents)
-            },
+        CheckIdView(
             uiState = uiState,
             innerPadding = innerPadding,
-        )
+        ) {
+            contentViewModel.setUiEvent(ContentUiEvents.CheckMenuId)
+        }
     }
 
     LaunchedEffect(key1 = Unit) {

@@ -110,7 +110,7 @@ internal fun EditDishView(
                     if (text.length <= 60)
                         dishNameText = text
                 },
-                label = { Text(text = "Name") },
+                label = { Text(text = "Dish name") },
                 enabled = isEnabled,
                 shape = RoundedCornerShape(24.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -204,6 +204,14 @@ internal fun EditDishView(
                 },
                 onAccept = {
                     eventHandler(
+                        ContentUiEvents.SetNamePriceWeightDescription(
+                            name = dishNameText,
+                            price = dishPriceText,
+                            weight = dishWeightText,
+                            description = dishDescriptionText,
+                        )
+                    )
+                    eventHandler(
                         ContentUiEvents.SaveDishItem(
                             DishData(
                                 id = dishData.id,
@@ -217,10 +225,10 @@ internal fun EditDishView(
                         )
                     )
                 },
-                isEnable = isEnabled,
                 cancelText = "Cancel",
                 acceptText = "Save",
-                isAcceptEnabled = dishNameText.isNotEmpty() && dishPriceText.isNotEmpty() && dishDescriptionText.isNotEmpty()
+                isEnable = isEnabled,
+                isAcceptButtonEnabled = dishNameText.isNotEmpty() && dishPriceText.isNotEmpty() && dishDescriptionText.isNotEmpty()
             )
             Spacer(modifier = modifier.height(24.dp))
         }

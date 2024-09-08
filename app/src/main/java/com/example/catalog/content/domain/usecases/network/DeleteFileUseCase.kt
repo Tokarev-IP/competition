@@ -1,7 +1,6 @@
 package com.example.catalog.content.domain.usecases.network
 
 import com.example.catalog.content.data.interfaces.FirebaseStorageDeleteInterface
-import com.example.catalog.content.domain.interfaces.DeleteFileUseCaseInterface
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -27,6 +26,13 @@ class DeleteFileUseCase @Inject constructor(
                 }
             )
         }
-
     }
+}
+
+interface DeleteFileUseCaseInterface {
+    suspend fun deleteDish(
+        pathString: String = "dish",
+        menuId: String,
+        dishId: String,
+    )
 }

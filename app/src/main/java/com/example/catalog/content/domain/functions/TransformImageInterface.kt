@@ -7,14 +7,12 @@ import android.net.Uri
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
+interface TransformImageInterface {
 
-interface TransformImageFunctionsInterface {
-
-    fun compressAndTransformImageFromUriToBitmap(
+    fun transformImageFromUriToBitmap(
         imageUri: Uri,
         maxWidth: Int,
         maxHeight: Int,
-        quality: Int,
         appContext: Context,
     ): Bitmap {
         val imageStream: InputStream? = appContext.contentResolver.openInputStream(imageUri)
@@ -38,7 +36,7 @@ interface TransformImageFunctionsInterface {
         return Bitmap.createScaledBitmap(bitmap, width, height, true)
     }
 
-    fun compressAndTransformImageFromUriToByteArray(
+    fun transformAndCompressImageFromUriToByteArray(
         imageUri: Uri,
         maxWidth: Int,
         maxHeight: Int,

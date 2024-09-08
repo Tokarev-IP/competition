@@ -20,7 +20,7 @@ import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.common.EditDishItem
 
 @Composable
-internal fun MenuListView(
+internal fun DishListView(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     dishList: List<DishData>,

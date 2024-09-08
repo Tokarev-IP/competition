@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -36,17 +37,20 @@ import com.example.catalog.content.domain.data.DishData
 internal fun DishItem(
     modifier: Modifier = Modifier,
     dishData: DishData,
-    onCardClick: () -> Unit,
+    onCardClick: () -> Unit = {},
+    padding: Dp = 16.dp,
+    isEnabled: Boolean = true,
 ) {
     OutlinedCard(
         modifier = modifier.fillMaxWidth(),
-        onClick = { onCardClick() }
+        onClick = { onCardClick() },
+        enabled = isEnabled,
     ) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(24.dp),
+                .padding(padding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -85,9 +89,9 @@ internal fun DishItem(
 internal fun EditDishItem(
     modifier: Modifier = Modifier,
     dishData: DishData,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
-    onCardClick: () -> Unit,
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {},
+    onCardClick: () -> Unit = {},
     isEnabled: Boolean = true,
 ) {
     Box(
@@ -95,7 +99,9 @@ internal fun EditDishItem(
     ) {
         DishItem(
             dishData = dishData,
-            onCardClick = { onCardClick() }
+            onCardClick = { onCardClick() },
+            padding = 24.dp,
+            isEnabled = isEnabled,
         )
 
         IconButton(
@@ -118,7 +124,7 @@ internal fun EditDishItem(
 
 @Composable
 @Preview(showBackground = true)
-fun EditDishItemPreview() {
+private fun EditDishItemPreview() {
     val bitmap = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     canvas.drawColor(Color.RED)
@@ -130,8 +136,5 @@ fun EditDishItemPreview() {
             weight = 350.0,
             updatedImageModel = bitmap,
         ),
-        onEdit = {},
-        onDelete = {},
-        onCardClick = {}
     )
 }

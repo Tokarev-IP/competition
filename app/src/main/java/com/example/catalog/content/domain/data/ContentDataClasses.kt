@@ -20,3 +20,11 @@ class DocDishData(
     val weight: Double = 0.0,
     val imageByteArray: ByteArray? = null,
 )
+
+class PdfDishData(
+    val name: String = "",
+    val description: String = "",
+    val price: Double = 0.0,
+    val weight: Double = 0.0,
+    val bitmap: Bitmap? = null,
+)

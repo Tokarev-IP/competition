@@ -5,8 +5,8 @@ import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.domain.data.DishDataFirebase
 import com.example.catalog.content.domain.data.MenuIdFirebase
 import com.example.catalog.content.domain.data.MenuInfoFirebase
+import com.example.catalog.content.domain.data.SectionDataFirebase
 import com.example.catalog.content.domain.data.toDishData
-import com.example.catalog.content.domain.interfaces.DownloadDataUseCaseInterface
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -39,7 +39,7 @@ class DownloadDataUseCase @Inject constructor(
 
     override suspend fun downloadMenuInfoData(
         collection: String,
-        menuId: String
+        menuId: String,
     ): MenuInfoFirebase? {
         return suspendCancellableCoroutine { continuation ->
             firestoreDownloadInterface.downloadDocumentFromOneCollection(
@@ -59,7 +59,7 @@ class DownloadDataUseCase @Inject constructor(
     override suspend fun downloadMenuDishListData(
         collection1: String,
         collection2: String,
-        menuId: String
+        menuId: String,
     ): List<DishData> {
         return suspendCancellableCoroutine { continuation ->
             firestoreDownloadInterface.downloadDataFromTwoCollection(
@@ -84,4 +84,54 @@ class DownloadDataUseCase @Inject constructor(
         }
     }
 
+    override suspend fun downloadMenuSectionListData(
+        collection1: String,
+        collection2: String,
+        menuId: String,
+    ): List<SectionDataFirebase> {
+        return suspendCancellableCoroutine { continuation ->
+            firestoreDownloadInterface.downloadDataFromTwoCollection(
+                collection1 = collection1,
+                collection2 = collection2,
+                documentPath = menuId,
+                onSuccess = { result: QuerySnapshot ->
+                    val dataList = mutableListOf<SectionDataFirebase>()
+                    for (document in result) {
+                        if (document != null) {
+                            val dataFirebase = document.toObject(SectionDataFirebase::class.java)
+                            dataList.add(dataFirebase)
+                        }
+                    }
+                    continuation.resume(dataList)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
+}
+
+interface DownloadDataUseCaseInterface {
+    suspend fun downloadMenuId(
+        collection: String = "id",
+        userId: String,
+    ): MenuIdFirebase?
+
+    suspend fun downloadMenuInfoData(
+        collection: String = "menu",
+        menuId: String,
+    ): MenuInfoFirebase?
+
+    suspend fun downloadMenuDishListData(
+        collection1: String = "data",
+        collection2: String = "menu",
+        menuId: String,
+    ): List<DishData>
+
+    suspend fun downloadMenuSectionListData(
+        collection1: String = "data",
+        collection2: String = "section",
+        menuId: String,
+    ): List<SectionDataFirebase>
 }

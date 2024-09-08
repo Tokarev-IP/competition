@@ -2,7 +2,6 @@ package com.example.catalog.content.domain.usecases.network
 
 import android.net.Uri
 import com.example.catalog.content.data.repositories.FirebaseStorageDownloadRepository
-import com.example.catalog.content.domain.interfaces.DownloadFileUseCaseInterface
 import com.google.firebase.storage.StorageMetadata
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
@@ -93,4 +92,29 @@ class DownloadFileUseCase @Inject constructor(
             )
         }
     }
+}
+
+interface DownloadFileUseCaseInterface {
+    suspend fun downloadUriOfMenuPicture(
+        pathString: String = "pic",
+        menuId: String,
+    ): Uri
+
+    suspend fun downloadUriOfDishPicture(
+        pathString: String = "dish",
+        menuId: String,
+        dishId: String,
+    ): Uri
+
+    suspend fun downloadDishImageFile(
+        pathString: String = "dish",
+        menuId: String,
+        dishId: String,
+    ): ByteArray
+
+    suspend fun checkIfDishImageExists(
+        pathString: String = "dish",
+        menuId: String,
+        dishId: String,
+    ): Boolean
 }

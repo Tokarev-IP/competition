@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.example.catalog.content.domain.data.DocDishData
-import com.example.catalog.content.domain.functions.CreateDocFileInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.apache.poi.util.Units
@@ -117,5 +116,13 @@ class CreateDocFile @Inject constructor(
             }
         }
     }
+}
 
+interface CreateDocFileInterface {
+    suspend fun createMenuDoc(
+        folderUri: Uri,
+        language: String = "",
+        filename: String = "menu_doc_${language}.docx",
+        dishList: List<DocDishData>,
+    )
 }

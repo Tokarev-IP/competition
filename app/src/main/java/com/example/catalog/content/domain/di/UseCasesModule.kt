@@ -1,25 +1,25 @@
 package com.example.catalog.content.domain.di
 
-import com.example.catalog.content.domain.functions.CreateDocFileInterface
-import com.example.catalog.content.domain.functions.TransformBitmapImageInterface
-import com.example.catalog.content.domain.interfaces.DeleteDataUseCaseInterface
-import com.example.catalog.content.domain.interfaces.DeleteFileUseCaseInterface
-import com.example.catalog.content.domain.interfaces.TransformImageUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.DownloadDataUseCase
-import com.example.catalog.content.domain.usecases.network.DownloadFileUseCase
-import com.example.catalog.content.domain.usecases.network.UploadDataUseCase
-import com.example.catalog.content.domain.usecases.network.UploadFileUseCase
-import com.example.catalog.content.domain.interfaces.DownloadDataUseCaseInterface
-import com.example.catalog.content.domain.interfaces.DownloadFileUseCaseInterface
-import com.example.catalog.content.domain.interfaces.GenerateAiTextUseCaseInterface
-import com.example.catalog.content.domain.interfaces.UploadDataUseCaseInterface
-import com.example.catalog.content.domain.interfaces.UploadFileUseCaseInterface
-import com.example.catalog.content.domain.usecases.logic.CreateDocFile
+import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCase
+import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCaseInterface
+import com.example.catalog.content.domain.usecases.logic.TransformBitmapImageUseCase
+import com.example.catalog.content.domain.usecases.logic.TransformBitmapImageUseCaseInterface
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCase
-import com.example.catalog.content.domain.usecases.network.GenerateAiTextUseCase
-import com.example.catalog.content.domain.usecases.logic.SegmentImageInterfaceUseCase
+import com.example.catalog.content.domain.usecases.logic.TransformImageUseCaseInterface
 import com.example.catalog.content.domain.usecases.network.DeleteDataUseCase
+import com.example.catalog.content.domain.usecases.network.DeleteDataUseCaseInterface
 import com.example.catalog.content.domain.usecases.network.DeleteFileUseCase
+import com.example.catalog.content.domain.usecases.network.DeleteFileUseCaseInterface
+import com.example.catalog.content.domain.usecases.network.DownloadDataUseCase
+import com.example.catalog.content.domain.usecases.network.DownloadDataUseCaseInterface
+import com.example.catalog.content.domain.usecases.network.DownloadFileUseCase
+import com.example.catalog.content.domain.usecases.network.DownloadFileUseCaseInterface
+import com.example.catalog.content.domain.usecases.network.GenerateAiTextUseCase
+import com.example.catalog.content.domain.usecases.network.GenerateAiTextUseCaseInterface
+import com.example.catalog.content.domain.usecases.network.UploadDataUseCase
+import com.example.catalog.content.domain.usecases.network.UploadDataUseCaseInterface
+import com.example.catalog.content.domain.usecases.network.UploadFileUseCase
+import com.example.catalog.content.domain.usecases.network.UploadFileUseCaseInterface
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -56,11 +56,7 @@ interface UseCasesModule {
 
     @Singleton
     @Binds
-    fun bindTransformBitmapImageInterface(impl: SegmentImageInterfaceUseCase): TransformBitmapImageInterface
-
-    @Singleton
-    @Binds
-    fun bindCreateDocFileInterface(impl: CreateDocFile): CreateDocFileInterface
+    fun bindTransformBitmapImageUseCaseInterface(impl: TransformBitmapImageUseCase): TransformBitmapImageUseCaseInterface
 
     @Singleton
     @Binds
@@ -69,4 +65,8 @@ interface UseCasesModule {
     @Singleton
     @Binds
     fun bindDeleteFileUseCaseInterface(impl: DeleteFileUseCase): DeleteFileUseCaseInterface
+
+    @Singleton
+    @Binds
+    fun bindSaveMenuPdfFileUseCaseInterface(impl: SaveMenuPdfFileUseCase): SaveMenuPdfFileUseCaseInterface
 }

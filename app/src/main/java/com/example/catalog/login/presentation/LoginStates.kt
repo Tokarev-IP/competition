@@ -1,15 +1,18 @@
 package com.example.catalog.login.presentation
 
+import com.example.catalog.content.presentation.base.EventInterface
+import com.example.catalog.content.presentation.base.IntentInterface
+import com.example.catalog.content.presentation.base.StateInterface
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 
-interface LoginUiStates {
+interface LoginUiStates: StateInterface {
     object Show : LoginUiStates
     object Loading : LoginUiStates
     object Error : LoginUiStates
 }
 
-sealed interface LoginUiEvents {
+sealed interface LoginUiEvents: EventInterface {
     data object GoBackNavigation : LoginUiEvents
     data object LoginUsingPhoneNumber : LoginUiEvents
     data object GoToLoginChooseScreen : LoginUiEvents
@@ -28,7 +31,7 @@ sealed interface LoginUiEvents {
     data object CheckUser : LoginUiEvents
 }
 
-interface LoginUiIntents {
+interface LoginUiIntents: IntentInterface {
     object GoToPhoneLoginScreen : LoginUiIntents
     object GoBackNavigation : LoginUiIntents
     object GoToContentActivity : LoginUiIntents

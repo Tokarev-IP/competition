@@ -5,21 +5,22 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.example.catalog.content.presentation.screens.CheckIdScreen
 import com.example.catalog.content.presentation.screens.CreateMenuScreen
 import com.example.catalog.content.presentation.screens.EditDishScreen
-import com.example.catalog.content.presentation.screens.MenuListScreen
+import com.example.catalog.content.presentation.screens.DishListScreen
+import com.example.catalog.content.presentation.screens.EditSectionScreen
+import com.example.catalog.content.presentation.screens.SectionListScreen
+import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 
 @Composable
 fun ContentActivityCompose(
@@ -28,7 +29,6 @@ fun ContentActivityCompose(
     navController: NavHostController = rememberNavController(),
 ) {
     val uiIntent by contentViewModel.getUiIntentsFlow().collectAsState(initial = null)
-    val snackBarHostState = remember { SnackbarHostState() }
 
     when (uiIntent) {
         is ContentUiIntents.GoToEditDishScreen -> {
@@ -36,8 +36,8 @@ fun ContentActivityCompose(
             contentViewModel.clearUiIntents()
         }
 
-        is ContentUiIntents.GoToMenuListScreen -> {
-            navController.navigate(ScreenRoutes.MenuListScreen) {
+        is ContentUiIntents.GoToDishListScreen -> {
+            navController.navigate(ScreenRoutes.DishListScreen) {
                 popUpTo(ScreenRoutes.CreateMenuScreen) { inclusive = true }
             }
             contentViewModel.clearUiIntents()
@@ -50,20 +50,21 @@ fun ContentActivityCompose(
 
         is ContentUiIntents.GoToCreateMenuScreen -> {
             navController.navigate(ScreenRoutes.CreateMenuScreen) {
-                popUpTo(ScreenRoutes.MenuListScreen) { inclusive = true }
+                popUpTo(ScreenRoutes.DishListScreen) { inclusive = true }
             }
             contentViewModel.clearUiIntents()
         }
 
-        is ContentUiIntents.ShowSnackBarMsg -> {
-            val snackBarMsg = (uiIntent as ContentUiIntents.ShowSnackBarMsg).msg
-            LaunchedEffect(key1 = snackBarMsg) {
-                snackBarHostState.showSnackbar(
-                    message = snackBarMsg,
-                    actionLabel = "Result of action",
-                    duration = SnackbarDuration.Short
-                )
-            }
+        is ContentUiIntents.GoToSectionListScreen -> {
+            navController.navigate(ScreenRoutes.SectionListScreen)
+            contentViewModel.clearUiIntents()
+        }
+
+        is ContentUiIntents.GoToEditSectionScreen -> {
+            val name = (uiIntent as ContentUiIntents.GoToEditSectionScreen).name
+            val id = (uiIntent as ContentUiIntents.GoToEditSectionScreen).id
+            navController.navigate(ScreenRoutes.EditSectionScreen(name = name, id = id))
+            contentViewModel.clearUiIntents()
         }
     }
 
@@ -72,7 +73,7 @@ fun ContentActivityCompose(
             modifier = modifier
                 .fillMaxSize(),
             navController = navController,
-            startDestination = ScreenRoutes.CreateMenuScreen,
+            startDestination = ScreenRoutes.CheckIdScreen,
             enterTransition = { fadeIn(tween(300)) },
             exitTransition = { fadeOut(tween(300)) },
         ) {
@@ -84,8 +85,26 @@ fun ContentActivityCompose(
                 CreateMenuScreen(contentViewModel = contentViewModel)
             }
 
-            composable<ScreenRoutes.MenuListScreen> {
-                MenuListScreen(contentViewModel = contentViewModel)
+            composable<ScreenRoutes.DishListScreen> {
+                DishListScreen(contentViewModel = contentViewModel)
+            }
+
+            composable<ScreenRoutes.SectionListScreen> {
+                SectionListScreen(contentViewModel = contentViewModel)
+            }
+
+            composable<ScreenRoutes.EditSectionScreen> { backStackEntry ->
+                val data = backStackEntry.toRoute<ScreenRoutes.EditSectionScreen>()
+
+                EditSectionScreen(
+                    contentViewModel = contentViewModel,
+                    name = data.name,
+                    id = data.id,
+                )
+            }
+
+            composable<ScreenRoutes.CheckIdScreen> {
+                CheckIdScreen(contentViewModel = contentViewModel)
             }
         }
     }
