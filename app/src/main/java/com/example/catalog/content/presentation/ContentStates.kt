@@ -3,18 +3,15 @@ package com.example.catalog.content.presentation
 import android.graphics.Bitmap
 import android.net.Uri
 import com.example.catalog.content.domain.data.DishData
-import com.example.catalog.content.presentation.base.EventInterface
-import com.example.catalog.content.presentation.base.IntentInterface
-import com.example.catalog.content.presentation.base.StateInterface
 import kotlinx.serialization.Serializable
 
-interface ContentUiStates: StateInterface {
+interface ContentUiStates {
     data object Show : ContentUiStates
     data object Loading : ContentUiStates
     data object Error : ContentUiStates
 }
 
-sealed interface ContentUiEvents: EventInterface {
+sealed interface ContentUiEvents {
     class SaveDishItem(val dishData: DishData) : ContentUiEvents
     class EditDishItem(val dishData: DishData) : ContentUiEvents
     data object CreateDishItem : ContentUiEvents
@@ -37,7 +34,7 @@ sealed interface ContentUiEvents: EventInterface {
     class SaveMenuAsPdfFile(val folderUri: Uri) : ContentUiEvents
 }
 
-interface ContentUiIntents: IntentInterface {
+interface ContentUiIntents {
     data object GoToEditDishScreen : ContentUiIntents
     data object GoBackNavigation : ContentUiIntents
     data object GoToDishListScreen : ContentUiIntents
@@ -65,7 +62,7 @@ interface ScreenRoutes {
     class EditSectionScreen(val name: String, val id: String) : ScreenRoutes
 
     @Serializable
-    data object CheckIdScreen: ScreenRoutes
+    data object CheckIdScreen : ScreenRoutes
 }
 
 enum class LanguageList(
