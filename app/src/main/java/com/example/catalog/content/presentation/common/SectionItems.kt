@@ -18,12 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.catalog.content.domain.data.SectionDataFirebase
+import com.example.catalog.content.domain.data.SectionData
 
 @Composable
 internal fun SectionItem(
     modifier: Modifier = Modifier,
-    sectionData: SectionDataFirebase,
+    sectionData: SectionData,
     padding: Dp = 16.dp,
     isEnabled: Boolean = true,
     onClick: () -> Unit = {},
@@ -51,7 +51,7 @@ internal fun SectionItem(
 @Composable
 internal fun EditSectionItem(
     modifier: Modifier = Modifier,
-    sectionData: SectionDataFirebase,
+    sectionData: SectionData,
     onClick: () -> Unit = {},
     onEdit: () -> Unit = {},
     isEnabled: Boolean = true,
@@ -79,7 +79,7 @@ internal fun EditSectionItem(
 @Preview(showBackground = true)
 private fun EditSectionItemPreview() {
     EditSectionItem(
-        sectionData = SectionDataFirebase(
+        sectionData = SectionData(
             id = "1234567890",
             name = "Main dishes"
         )

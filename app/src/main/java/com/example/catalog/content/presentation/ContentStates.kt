@@ -3,6 +3,8 @@ package com.example.catalog.content.presentation
 import android.graphics.Bitmap
 import android.net.Uri
 import com.example.catalog.content.domain.data.DishData
+import com.example.catalog.content.domain.data.MenuInfoData
+import com.example.catalog.content.domain.data.SectionData
 import kotlinx.serialization.Serializable
 
 interface ContentUiStates {
@@ -12,36 +14,48 @@ interface ContentUiStates {
 }
 
 sealed interface ContentUiEvents {
+    class CreateDishItem(val sectionId: String) : ContentUiEvents
     class SaveDishItem(val dishData: DishData) : ContentUiEvents
     class EditDishItem(val dishData: DishData) : ContentUiEvents
-    data object CreateDishItem : ContentUiEvents
+    class DeleteDishItem(val dishData: DishData) : ContentUiEvents
+    class ShowDishListOfSection(val sectionData: SectionData) : ContentUiEvents
+
+    data object CreateSectionItem : ContentUiEvents
+    class SaveSectionItem(val sectionData: SectionData) : ContentUiEvents
+    class EditSectionItem(val sectionData: SectionData) : ContentUiEvents
+    class DeleteSection(val sectionData: SectionData) : ContentUiEvents
+
     data object GoBack : ContentUiEvents
     data object DownloadMenuList : ContentUiEvents
     data object CreateMenu : ContentUiEvents
     data object CheckMenuId : ContentUiEvents
+    data object DownloadDishAndSectionLists : ContentUiEvents
+
     class GenerateDescriptionOfDish(val imageBitmap: Bitmap, val dishName: String) : ContentUiEvents
-    class SetInitialImage(val imageUri: Uri) : ContentUiEvents
-    class CreateUpdatedImage(val imageBitmap: Bitmap) : ContentUiEvents
-    class SaveMenuAsDocFile(val folderUri: Uri, val language: String? = null) : ContentUiEvents
-    class SetNamePriceWeightDescription(
+    class SetUpdatedDishImage(val imageUri: Uri) : ContentUiEvents
+    class TransformUpdatedDishImage(val imageBitmap: Bitmap) : ContentUiEvents
+    class SetDishData(
         val name: String,
         val price: String,
         val description: String,
         val weight: String,
     ) : ContentUiEvents
 
-    class DeleteDish(val dishData: DishData) : ContentUiEvents
-    class SaveMenuAsPdfFile(val folderUri: Uri) : ContentUiEvents
+    class SaveMenuAsPdfFile(val folderUri: Uri, val language: String? = null) : ContentUiEvents
+    class SaveInfoImage(val imageUri: Uri) : ContentUiEvents
+    class SaveMenuInfo(val menuInfoData: MenuInfoData): ContentUiEvents
 }
 
 interface ContentUiIntents {
     data object GoToEditDishScreen : ContentUiIntents
     data object GoBackNavigation : ContentUiIntents
-    data object GoToDishListScreen : ContentUiIntents
+    class GoToDishListScreen(val sectionData: SectionData) : ContentUiIntents
     data object GoToCreateMenuScreen : ContentUiIntents
     data object GoToSectionListScreen : ContentUiIntents
     data object GoToCheckIdScreen : ContentUiIntents
-    class GoToEditSectionScreen(val name: String, val id: String) : ContentUiIntents
+    data object GoToEditInfoScreen : ContentUiIntents
+    data object GoToEditMenuInfoScreen : ContentUiIntents
+    class GoToEditSectionScreen(val sectionData: SectionData) : ContentUiIntents
     class ShowSnackBarMsg(val msg: String) : ContentUiIntents
 }
 
@@ -50,7 +64,7 @@ interface ScreenRoutes {
     data object EditDishScreen : ScreenRoutes
 
     @Serializable
-    data object DishListScreen : ScreenRoutes
+    class DishListScreen(val id: String, val name: String, val position: Int) : ScreenRoutes
 
     @Serializable
     data object CreateMenuScreen : ScreenRoutes
@@ -59,7 +73,7 @@ interface ScreenRoutes {
     data object SectionListScreen : ScreenRoutes
 
     @Serializable
-    class EditSectionScreen(val name: String, val id: String) : ScreenRoutes
+    class EditSectionScreen(val id: String, val name: String, val position: Int) : ScreenRoutes
 
     @Serializable
     data object CheckIdScreen : ScreenRoutes

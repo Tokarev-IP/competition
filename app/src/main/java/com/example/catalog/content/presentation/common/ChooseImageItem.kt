@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -22,9 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,13 +31,12 @@ internal fun ChooseImageItem(
     modifier: Modifier = Modifier,
     height: Dp,
     width: Dp,
-    corner: Dp,
-    uri: Any?,
-    enabled: Boolean,
-    editButtonEnabled: Boolean,
+    corner: Dp = 0.dp,
+    uri: Any? = null,
+    enabled: Boolean = true,
     onChoosePicture: () -> Unit,
     onClearPicture: () -> Unit,
-    onEditPicture: () -> Unit,
+    additionalIconButtonOnTheTopLeft: @Composable (modifier: Modifier) -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -74,13 +69,9 @@ internal fun ChooseImageItem(
                     Icon(Icons.Filled.Clear, contentDescription = "Clear the picture of the dish")
                 }
 
-                IconButton(
-                    onClick = { onEditPicture() },
-                    modifier = modifier.align(Alignment.TopStart),
-                    enabled = editButtonEnabled,
-                ) {
-                    Icon(Icons.Filled.Edit, contentDescription = "Edit the picture of the dish")
-                }
+                additionalIconButtonOnTheTopLeft(
+                    modifier.align(Alignment.TopStart),
+                )
             }
         else {
             Text(text = "Please, add an image of the dish")

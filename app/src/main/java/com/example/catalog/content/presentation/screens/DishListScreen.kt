@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.BasicAlertDialog
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.catalog.content.domain.data.DishData
+import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
@@ -51,6 +53,7 @@ import com.example.catalog.content.presentation.views.dialogs.DishReviewDialogVi
 internal fun DishListScreen(
     contentViewModel: ContentViewModel,
     modifier: Modifier = Modifier,
+    sectionData: SectionData,
 ) {
     val uiState by contentViewModel.getUiStatesFlow().collectAsState()
     val dishList by contentViewModel.getDishListFlow().collectAsState()
@@ -65,16 +68,14 @@ internal fun DishListScreen(
 
     val chooseFolderLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { uri: Uri? ->
-            if (uri != null) {
-                isOpenedLanguageDialog = false
-
+            uri?.let { notNullUri ->
                 contentViewModel.setUiEvent(
-                    ContentUiEvents.SaveMenuAsDocFile(
-                        uri,
+                    ContentUiEvents.SaveMenuAsPdfFile(
+                        notNullUri,
                         selectedLanguage
                     )
                 )
-            }
+            } ?: run { snackBarMsg = "No folder was selected" }
         }
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -98,7 +99,17 @@ internal fun DishListScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Menu") },
+                title = { Text(text = sectionData.name) },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { contentViewModel.setUiEvent(ContentUiEvents.GoBack) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
+                },
                 actions = {
                     if (dishList.isNotEmpty()) {
                         IconButton(
@@ -166,7 +177,8 @@ internal fun DishListScreen(
                     onCardClick = { data: DishData ->
                         dishData = data
                         isOpenedDishViewDialog = true
-                    }
+                    },
+                    sectionId = sectionData.id,
                 )
             }
 
@@ -185,10 +197,6 @@ internal fun DishListScreen(
             }
         }
     }
-
-//    LaunchedEffect(key1 = Unit) {
-//        contentViewModel.setUiEvent(ContentUiEvents.DownloadMenuList)
-//    }
 
     if (isOpenedLanguageDialog)
         BasicAlertDialog(onDismissRequest = { isOpenedLanguageDialog = false }) {

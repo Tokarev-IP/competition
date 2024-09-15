@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.presentation.screens.CheckIdScreen
 import com.example.catalog.content.presentation.screens.CreateMenuScreen
 import com.example.catalog.content.presentation.screens.EditDishScreen
@@ -37,7 +38,14 @@ fun ContentActivityCompose(
         }
 
         is ContentUiIntents.GoToDishListScreen -> {
-            navController.navigate(ScreenRoutes.DishListScreen) {
+            val sectionData = (uiIntent as ContentUiIntents.GoToDishListScreen).sectionData
+            navController.navigate(
+                ScreenRoutes.DishListScreen(
+                    id = sectionData.id,
+                    name = sectionData.name,
+                    position = sectionData.position,
+                )
+            ) {
                 popUpTo(ScreenRoutes.CreateMenuScreen) { inclusive = true }
             }
             contentViewModel.clearUiIntents()
@@ -61,9 +69,19 @@ fun ContentActivityCompose(
         }
 
         is ContentUiIntents.GoToEditSectionScreen -> {
-            val name = (uiIntent as ContentUiIntents.GoToEditSectionScreen).name
-            val id = (uiIntent as ContentUiIntents.GoToEditSectionScreen).id
-            navController.navigate(ScreenRoutes.EditSectionScreen(name = name, id = id))
+            val sectionData = (uiIntent as ContentUiIntents.GoToEditSectionScreen).sectionData
+            navController.navigate(
+                ScreenRoutes.EditSectionScreen(
+                    id = sectionData.id,
+                    name = sectionData.name,
+                    position = sectionData.position,
+                )
+            )
+            contentViewModel.clearUiIntents()
+        }
+
+        is ContentUiIntents.GoToCheckIdScreen -> {
+            navController.navigate(ScreenRoutes.CheckIdScreen)
             contentViewModel.clearUiIntents()
         }
     }
@@ -85,8 +103,17 @@ fun ContentActivityCompose(
                 CreateMenuScreen(contentViewModel = contentViewModel)
             }
 
-            composable<ScreenRoutes.DishListScreen> {
-                DishListScreen(contentViewModel = contentViewModel)
+            composable<ScreenRoutes.DishListScreen> { backStackEntry ->
+                val data = backStackEntry.toRoute<ScreenRoutes.DishListScreen>()
+                val sectionData = SectionData(
+                    id = data.id,
+                    name = data.name,
+                    position = data.position,
+                )
+                DishListScreen(
+                    contentViewModel = contentViewModel,
+                    sectionData = sectionData,
+                )
             }
 
             composable<ScreenRoutes.SectionListScreen> {
@@ -95,11 +122,14 @@ fun ContentActivityCompose(
 
             composable<ScreenRoutes.EditSectionScreen> { backStackEntry ->
                 val data = backStackEntry.toRoute<ScreenRoutes.EditSectionScreen>()
-
+                val sectionData = SectionData(
+                    id = data.id,
+                    name = data.name,
+                    position = data.position,
+                )
                 EditSectionScreen(
                     contentViewModel = contentViewModel,
-                    name = data.name,
-                    id = data.id,
+                    sectionData = sectionData,
                 )
             }
 

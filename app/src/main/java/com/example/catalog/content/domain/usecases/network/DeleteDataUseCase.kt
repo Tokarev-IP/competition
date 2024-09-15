@@ -10,7 +10,7 @@ class DeleteDataUseCase @Inject constructor(
     private val firestoreDeleteInterface: FirestoreDeleteInterface,
 ) : DeleteDataUseCaseInterface {
 
-    override suspend fun deleteMenuDish(
+    override suspend fun deleteMenuDishData(
         collection1: String,
         collection2: String,
         menuId: String,
@@ -32,7 +32,7 @@ class DeleteDataUseCase @Inject constructor(
         }
     }
 
-    override suspend fun deleteMenuSection(
+    override suspend fun deleteMenuSectionData(
         collection1: String,
         collection2: String,
         menuId: String,
@@ -53,20 +53,49 @@ class DeleteDataUseCase @Inject constructor(
             )
         }
     }
+
+    override suspend fun deleteInfoImageData(
+        collection1: String,
+        collection2: String,
+        menuId: String,
+        imageId: String
+    ) {
+        return suspendCancellableCoroutine<Unit> { continuation ->
+            firestoreDeleteInterface.deleteDocumentTwoCollections(
+                collection1 = collection1,
+                collection2 = collection2,
+                document1 = menuId,
+                document2 = imageId,
+                onSuccess = {
+                    continuation.resume(Unit)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
 }
 
 interface DeleteDataUseCaseInterface {
-    suspend fun deleteMenuDish(
+    suspend fun deleteMenuDishData(
         collection1: String = "data",
         collection2: String = "menu",
         menuId: String,
         dishId: String,
     )
 
-    suspend fun deleteMenuSection(
-        collection1: String = "section",
-        collection2: String = "menu",
+    suspend fun deleteMenuSectionData(
+        collection1: String = "data",
+        collection2: String = "section",
         menuId: String,
         sectionId: String,
+    )
+
+    suspend fun deleteInfoImageData(
+        collection1: String = "data",
+        collection2: String = "image",
+        menuId: String,
+        imageId: String,
     )
 }

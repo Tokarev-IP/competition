@@ -1,5 +1,6 @@
 package com.example.catalog.content.domain.usecases.network
 
+import android.net.Uri
 import com.example.catalog.content.data.repositories.FirebaseStorageUploadRepository
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
@@ -10,15 +11,15 @@ class UploadFileUseCase @Inject constructor(
     private val firebaseStorageUploadRepository: FirebaseStorageUploadRepository
 ) : UploadFileUseCaseInterface {
 
-    override suspend fun uploadMenuPictureUsingByteArray(
+    override suspend fun uploadMenuInfoImageUsingUri(
         pathString: String,
         menuId: String,
-        byteArray: ByteArray,
+        uri: Uri
     ) {
         return suspendCancellableCoroutine { continuation ->
-            firebaseStorageUploadRepository.uploadFileUsingByteArray(
-                pathString = "$menuId/$pathString/main_picture",
-                bytes = byteArray,
+            firebaseStorageUploadRepository.uploadFileUsingUri(
+                pathString = "$menuId/$pathString/$menuId",
+                fileUri = uri,
                 onSuccess = {
                     continuation.resume(Unit)
                 },
@@ -29,7 +30,15 @@ class UploadFileUseCase @Inject constructor(
         }
     }
 
-    override suspend fun uploadDishPictureUsingByteArray(
+    override suspend fun uploadMenuInfoImageUsingByteArray(
+        pathString: String,
+        menuId: String,
+        byteArray: ByteArray
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun uploadDishImageUsingByteArray(
         pathString: String,
         menuId: String,
         dishId: String,
@@ -48,19 +57,68 @@ class UploadFileUseCase @Inject constructor(
             )
         }
     }
+
+    override suspend fun uploadInfoImageUsingUri(
+        pathString: String,
+        menuId: String,
+        imageId: String,
+        uri: Uri
+    ) {
+        return suspendCancellableCoroutine { continuation ->
+            firebaseStorageUploadRepository.uploadFileUsingUri(
+                pathString = "$menuId/$pathString/$imageId",
+                fileUri = uri,
+                onSuccess = {
+                    continuation.resume(Unit)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
+
+    override suspend fun uploadInfoImageUsingByteArray(
+        pathString: String,
+        menuId: String,
+        imageId: String,
+        byteArray: ByteArray
+    ) {
+        TODO("Not yet implemented")
+    }
 }
 
 interface UploadFileUseCaseInterface {
-    suspend fun uploadMenuPictureUsingByteArray(
-        pathString: String = "pic",
+    suspend fun uploadMenuInfoImageUsingUri(
+        pathString: String = "picture",
+        menuId: String,
+        uri: Uri,
+    )
+
+    suspend fun uploadMenuInfoImageUsingByteArray(
+        pathString: String = "picture",
         menuId: String,
         byteArray: ByteArray,
     )
 
-    suspend fun uploadDishPictureUsingByteArray(
+    suspend fun uploadDishImageUsingByteArray(
         pathString: String = "dish",
         menuId: String,
         dishId: String,
+        byteArray: ByteArray,
+    )
+
+    suspend fun uploadInfoImageUsingUri(
+        pathString: String = "info",
+        menuId: String,
+        imageId: String,
+        uri: Uri,
+    )
+
+    suspend fun uploadInfoImageUsingByteArray(
+        pathString: String = "info",
+        menuId: String,
+        imageId: String,
         byteArray: ByteArray,
     )
 }

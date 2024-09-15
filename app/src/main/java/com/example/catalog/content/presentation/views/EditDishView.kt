@@ -3,7 +3,6 @@ package com.example.catalog.content.presentation.views
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -37,7 +37,7 @@ internal fun EditDishView(
     isEnabled: Boolean = true,
     eventHandler: (ContentUiEvents) -> Unit,
     dishData: DishData,
-    innerPadding: PaddingValues,
+    innerPadding: PaddingValues = PaddingValues(),
     onChooseNewImage: () -> Unit,
     onEditNewImage: (bitmap: Bitmap) -> Unit,
 ) {
@@ -49,7 +49,6 @@ internal fun EditDishView(
     var updatedImageModel: Bitmap? by remember { mutableStateOf(dishData.updatedImageModel) }
 
     dishData.apply {
-        dishNameText = dishData.name
         dishDescriptionText = dishData.description
         updatedImageModel = dishData.updatedImageModel
     }
@@ -69,10 +68,9 @@ internal fun EditDishView(
                 corner = 24.dp,
                 uri = imageModel ?: updatedImageModel,
                 enabled = isEnabled,
-                editButtonEnabled = updatedImageModel != null && isEnabled,
                 onChoosePicture = {
                     eventHandler(
-                        ContentUiEvents.SetNamePriceWeightDescription(
+                        ContentUiEvents.SetDishData(
                             name = dishNameText,
                             price = dishPriceText,
                             weight = dishWeightText,
@@ -85,25 +83,32 @@ internal fun EditDishView(
                     imageModel = null
                     updatedImageModel = null
                 },
-                onEditPicture = {
-                    eventHandler(
-                        ContentUiEvents.SetNamePriceWeightDescription(
-                            name = dishNameText,
-                            price = dishPriceText,
-                            weight = dishWeightText,
-                            description = dishDescriptionText,
+            ) { myModifier ->
+                IconButton(
+                    onClick = {
+                        eventHandler(
+                            ContentUiEvents.SetDishData(
+                                name = dishNameText,
+                                price = dishPriceText,
+                                weight = dishWeightText,
+                                description = dishDescriptionText,
+                            )
                         )
-                    )
-                    updatedImageModel?.let { bitmap ->
-                        onEditNewImage(bitmap)
-                    }
-                },
-            )
+                        updatedImageModel?.let { bitmap ->
+                            onEditNewImage(bitmap)
+                        }
+                    },
+                    modifier = myModifier,
+                    enabled = updatedImageModel != null && isEnabled,
+                ) {
+                    Icon(Icons.Filled.Edit, contentDescription = "Edit the picture of the dish")
+                }
+            }
+
             Spacer(modifier = modifier.height(24.dp))
 
             OutlinedTextField(
                 modifier = modifier
-                    .fillMaxHeight(0.9f)
                     .padding(horizontal = 12.dp),
                 value = dishNameText,
                 onValueChange = { text: String ->
@@ -126,7 +131,6 @@ internal fun EditDishView(
 
             OutlinedTextField(
                 modifier = modifier
-                    .fillMaxHeight(0.9f)
                     .padding(horizontal = 12.dp),
                 value = dishPriceText,
                 onValueChange = { text: String ->
@@ -152,7 +156,7 @@ internal fun EditDishView(
                     OutlinedButton(
                         onClick = {
                             eventHandler(
-                                ContentUiEvents.SetNamePriceWeightDescription(
+                                ContentUiEvents.SetDishData(
                                     name = dishNameText,
                                     price = dishPriceText,
                                     weight = dishWeightText,
@@ -177,7 +181,6 @@ internal fun EditDishView(
 
             OutlinedTextField(
                 modifier = modifier
-                    .fillMaxHeight(0.9f)
                     .padding(horizontal = 12.dp),
                 value = dishDescriptionText,
                 onValueChange = { text: String ->
@@ -204,7 +207,7 @@ internal fun EditDishView(
                 },
                 onAccept = {
                     eventHandler(
-                        ContentUiEvents.SetNamePriceWeightDescription(
+                        ContentUiEvents.SetDishData(
                             name = dishNameText,
                             price = dishPriceText,
                             weight = dishWeightText,

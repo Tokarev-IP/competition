@@ -22,7 +22,7 @@ import com.example.catalog.content.presentation.ContentUiStates
 internal fun CheckIdView(
     modifier: Modifier = Modifier,
     uiState: ContentUiStates,
-    innerPadding: PaddingValues,
+    innerPadding: PaddingValues = PaddingValues(),
     onRefresh:() -> Unit,
 ) {
     Box(

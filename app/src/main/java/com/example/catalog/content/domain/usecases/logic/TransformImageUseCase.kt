@@ -42,13 +42,9 @@ class TransformImageUseCase @Inject constructor(
     ): Bitmap {
         return suspendCancellableCoroutine { continuation ->
             val outputStream = ByteArrayOutputStream()
-
             bitmap.compress(format, quality, outputStream)
-
             val byteArray = outputStream.toByteArray()
-
             val compressedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-
             continuation.resume(compressedBitmap)
         }
     }

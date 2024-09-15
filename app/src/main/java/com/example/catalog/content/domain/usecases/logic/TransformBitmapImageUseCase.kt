@@ -18,6 +18,7 @@ import java.io.OutputStream
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class TransformBitmapImageUseCase @Inject constructor(
     @ApplicationContext private val appContext: Context,
@@ -96,7 +97,7 @@ class TransformBitmapImageUseCase @Inject constructor(
             }
 
             if (uriImage == null)
-                continuation.resumeWithException(NullPointerException("Null uri Image"))
+                continuation.resumeWithException(NullPointerException("Null uri of the image"))
         }
     }
 
@@ -104,45 +105,51 @@ class TransformBitmapImageUseCase @Inject constructor(
         foreground: Bitmap,
         color: Int
     ): Bitmap {
-        val result = Bitmap.createBitmap(foreground.width, foreground.height, foreground.config)
-        val canvas = Canvas(result)
-        canvas.drawColor(color)
-        canvas.drawBitmap(foreground, 0f, 0f, null)
+        return suspendCoroutine { continuation ->
+            val result = Bitmap.createBitmap(foreground.width, foreground.height, foreground.config)
+            val canvas = Canvas(result)
+            canvas.drawColor(color)
+            canvas.drawBitmap(foreground, 0f, 0f, null)
 
-        return result
+            continuation.resume(result)
+        }
     }
 
     override suspend fun cropBitmapToForeground(bitmap: Bitmap): Bitmap {
-        val width = bitmap.width
-        val height = bitmap.height
+        return suspendCoroutine { continuation ->
+            val width = bitmap.width
+            val height = bitmap.height
 
-        var minX = width
-        var minY = height
-        var maxX = 0
-        var maxY = 0
+            var minX = width
+            var minY = height
+            var maxX = 0
+            var maxY = 0
 
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                if (bitmap.getPixel(x, y) != Color.TRANSPARENT) {
-                    if (x < minX) minX = x
-                    if (x > maxX) maxX = x
-                    if (y < minY) minY = y
-                    if (y > maxY) maxY = y
+            for (y in 0 until height) {
+                for (x in 0 until width) {
+                    if (bitmap.getPixel(x, y) != Color.TRANSPARENT) {
+                        if (x < minX) minX = x
+                        if (x > maxX) maxX = x
+                        if (y < minY) minY = y
+                        if (y > maxY) maxY = y
+                    }
                 }
             }
-        }
 
-        if (minX < maxX && minY < maxY) {
-            return Bitmap.createBitmap(
-                bitmap,
-                minX - 20,
-                minY - 20,
-                maxX - minX + 40,
-                maxY - minY + 40
-            )
-        }
+            if (minX < maxX && minY < maxY) {
+                continuation.resume(
+                    Bitmap.createBitmap(
+                        bitmap,
+                        minX,
+                        minY,
+                        maxX - minX,
+                        maxY - minY,
+                    )
+                )
+            }
 
-        return bitmap
+            continuation.resume(bitmap)
+        }
     }
 }
 

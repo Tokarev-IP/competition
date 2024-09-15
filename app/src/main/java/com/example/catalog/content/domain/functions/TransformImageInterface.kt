@@ -9,64 +9,64 @@ import java.io.InputStream
 
 interface TransformImageInterface {
 
-    fun transformImageFromUriToBitmap(
-        imageUri: Uri,
-        maxWidth: Int,
-        maxHeight: Int,
-        appContext: Context,
-    ): Bitmap {
-        val imageStream: InputStream? = appContext.contentResolver.openInputStream(imageUri)
+//    fun transformImageFromUriToBitmap(
+//        imageUri: Uri,
+//        maxWidth: Int,
+//        maxHeight: Int,
+//        appContext: Context,
+//    ): Bitmap {
+//        val imageStream: InputStream? = appContext.contentResolver.openInputStream(imageUri)
+//
+//        val bitmap = BitmapFactory.decodeStream(imageStream)
+//
+//        var width = bitmap.width
+//        var height = bitmap.height
+//        val aspectRatio: Float = width.toFloat() / height.toFloat()
+//
+//        if (width > maxWidth || height > maxHeight) {
+//            if (aspectRatio > 1) {
+//                width = maxWidth
+//                height = (width / aspectRatio).toInt()
+//            } else {
+//                height = maxHeight
+//                width = (height * aspectRatio).toInt()
+//            }
+//        }
+//
+//        return Bitmap.createScaledBitmap(bitmap, width, height, true)
+//    }
 
-        val bitmap = BitmapFactory.decodeStream(imageStream)
-
-        var width = bitmap.width
-        var height = bitmap.height
-        val aspectRatio: Float = width.toFloat() / height.toFloat()
-
-        if (width > maxWidth || height > maxHeight) {
-            if (aspectRatio > 1) {
-                width = maxWidth
-                height = (width / aspectRatio).toInt()
-            } else {
-                height = maxHeight
-                width = (height * aspectRatio).toInt()
-            }
-        }
-
-        return Bitmap.createScaledBitmap(bitmap, width, height, true)
-    }
-
-    fun transformAndCompressImageFromUriToByteArray(
-        imageUri: Uri,
-        maxWidth: Int,
-        maxHeight: Int,
-        quality: Int,
-        appContext: Context,
-    ): ByteArray {
-        val imageStream: InputStream? = appContext.contentResolver.openInputStream(imageUri)
-
-        val bitmap = BitmapFactory.decodeStream(imageStream)
-
-        var width = bitmap.width
-        var height = bitmap.height
-        val aspectRatio: Float = width.toFloat() / height.toFloat()
-
-        if (width > maxWidth || height > maxHeight) {
-            if (aspectRatio > 1) {
-                width = maxWidth
-                height = (width / aspectRatio).toInt()
-            } else {
-                height = maxHeight
-                width = (height * aspectRatio).toInt()
-            }
-        }
-
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
-        val outputStream = ByteArrayOutputStream()
-        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-
-        return outputStream.toByteArray()
-    }
+//    fun transformAndCompressImageFromUriToByteArray(
+//        imageUri: Uri,
+//        maxWidth: Int,
+//        maxHeight: Int,
+//        quality: Int,
+//        appContext: Context,
+//    ): ByteArray {
+//        val imageStream: InputStream? = appContext.contentResolver.openInputStream(imageUri)
+//
+//        val bitmap = BitmapFactory.decodeStream(imageStream)
+//
+//        var width = bitmap.width
+//        var height = bitmap.height
+//        val aspectRatio: Float = width.toFloat() / height.toFloat()
+//
+//        if (width > maxWidth || height > maxHeight) {
+//            if (aspectRatio > 1) {
+//                width = maxWidth
+//                height = (width / aspectRatio).toInt()
+//            } else {
+//                height = maxHeight
+//                width = (height * aspectRatio).toInt()
+//            }
+//        }
+//
+//        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
+//        val outputStream = ByteArrayOutputStream()
+//        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+//
+//        return outputStream.toByteArray()
+//    }
 
     fun transformImageFromUriToBitmap(
         imageUri: Uri,

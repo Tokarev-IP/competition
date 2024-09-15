@@ -10,7 +10,7 @@ class DeleteFileUseCase @Inject constructor(
     private val firebaseStorageDeleteInterface: FirebaseStorageDeleteInterface,
 ) : DeleteFileUseCaseInterface {
 
-    override suspend fun deleteDish(
+    override suspend fun deleteDishImage(
         pathString: String,
         menuId: String,
         dishId: String,
@@ -27,12 +27,58 @@ class DeleteFileUseCase @Inject constructor(
             )
         }
     }
+
+    override suspend fun deleteInfoImage(
+        pathString: String,
+        menuId: String,
+        imageId: String
+    ) {
+        return suspendCancellableCoroutine { continuation ->
+            firebaseStorageDeleteInterface.deleteFile(
+                pathString = "$menuId/$pathString/$imageId",
+                onSuccess = {
+                    continuation.resume(Unit)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
+
+    override suspend fun deleteMainImage(
+        pathString: String,
+        menuId: String
+    ) {
+        return suspendCancellableCoroutine { continuation ->
+            firebaseStorageDeleteInterface.deleteFile(
+                pathString = "$menuId/$pathString/$menuId",
+                onSuccess = {
+                    continuation.resume(Unit)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
 }
 
 interface DeleteFileUseCaseInterface {
-    suspend fun deleteDish(
+    suspend fun deleteDishImage(
         pathString: String = "dish",
         menuId: String,
         dishId: String,
+    )
+
+    suspend fun deleteInfoImage(
+        pathString: String = "info",
+        menuId: String,
+        imageId: String,
+    )
+
+    suspend fun deleteMainImage(
+        pathString: String = "picture",
+        menuId: String,
     )
 }

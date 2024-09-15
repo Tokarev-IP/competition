@@ -4,7 +4,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.example.catalog.content.domain.data.DishData
-import com.example.catalog.content.domain.data.SectionDataFirebase
+import com.example.catalog.content.domain.data.InfoImageData
+import com.example.catalog.content.domain.data.MenuInfoData
+import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.domain.usecases.logic.CreateDocFileInterface
 import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCaseInterface
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCaseInterface
@@ -21,14 +23,15 @@ import com.example.catalog.content.presentation.ContentUiStates
 import com.example.catalog.content.presentation.base.ContentBaseViewModel
 import com.example.catalog.content.presentation.viewmodel.actions.EditDishItemActionsInterface
 import com.example.catalog.content.presentation.viewmodel.actions.EditDishListActionsInterface
+import com.example.catalog.content.presentation.viewmodel.actions.EditInfoImageListActionsInterface
+import com.example.catalog.content.presentation.viewmodel.actions.EditMenuInfoActionsInterface
+import com.example.catalog.content.presentation.viewmodel.actions.EditSectionListActionsInterface
 import com.example.catalog.content.presentation.viewmodel.actions.GetDataActionsInterface
 import com.example.catalog.content.presentation.viewmodel.actions.MenuActionsInterface
 import com.example.catalog.content.presentation.viewmodel.actions.PdfFileActionsInterface
 import com.example.catalog.login.domain.interfaces.PhoneAuthUseCaseInterface
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -52,6 +55,9 @@ class ContentViewModel @Inject constructor(
     private val getDataActionsInterface: GetDataActionsInterface,
     private val pdfFileActionsInterface: PdfFileActionsInterface,
     private val menuActionsInterface: MenuActionsInterface,
+    private val editSectionListActionsInterface: EditSectionListActionsInterface,
+    private val editInfoImageListActionsInterface: EditInfoImageListActionsInterface,
+    private val editMenuInfoActionsInterface: EditMenuInfoActionsInterface,
 ) : ContentBaseViewModel<ContentUiStates, ContentUiIntents, ContentUiEvents>(ContentUiStates.Loading) {
 
     private var menuIdVM: String? = null
@@ -85,7 +91,12 @@ class ContentViewModel @Inject constructor(
             }
 
             is ContentUiEvents.CreateDishItem -> {
-                setDishItemData(data = DishData(id = UUID.randomUUID().toString()))
+                setDishItemData(
+                    data = DishData(
+                        id = UUID.randomUUID().toString(),
+                        sectionId = uiEvent.sectionId,
+                    )
+                )
                 setUiIntent(ContentUiIntents.GoToEditDishScreen)
             }
 
@@ -111,39 +122,22 @@ class ContentViewModel @Inject constructor(
                 )
             }
 
-            is ContentUiEvents.CreateUpdatedImage -> {
-                updateDishImage(
+            is ContentUiEvents.TransformUpdatedDishImage -> {
+                transformUpdatedDishImage(
                     imageBitmap = uiEvent.imageBitmap,
                     dishData = getDishItemData()
                 )
             }
 
 
-            is ContentUiEvents.SetInitialImage -> {
-                setInitialImage(
+            is ContentUiEvents.SetUpdatedDishImage -> {
+                setUpdatedDishImage(
                     imageUri = uiEvent.imageUri,
                     dishData = getDishItemData()
                 )
             }
 
-            is ContentUiEvents.SaveMenuAsDocFile -> {
-                menuIdVM?.let { id ->
-                    uiEvent.language?.let { language ->
-                        createTranslatedMenuDocFile(
-                            menuId = id,
-                            folderUri = uiEvent.folderUri,
-                            dishList = getDishList(),
-                            translateLanguage = language,
-                        )
-                    } ?: createMenuDocFile(
-                        menuId = id,
-                        folderUri = uiEvent.folderUri,
-                        dishList = getDishList(),
-                    )
-                } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
-            }
-
-            is ContentUiEvents.SetNamePriceWeightDescription -> {
+            is ContentUiEvents.SetDishData -> {
                 setDishItemData(
                     getDishItemData().copy(
                         name = uiEvent.name,
@@ -154,7 +148,7 @@ class ContentViewModel @Inject constructor(
                 )
             }
 
-            is ContentUiEvents.DeleteDish -> {
+            is ContentUiEvents.DeleteDishItem -> {
                 menuIdVM?.let { id ->
                     deleteDish(
                         menuId = id,
@@ -165,9 +159,70 @@ class ContentViewModel @Inject constructor(
             }
 
             is ContentUiEvents.SaveMenuAsPdfFile -> {
-                setUiState(ContentUiStates.Loading)
+                menuIdVM?.let { id ->
+                    uiEvent.language?.let { language ->
+                        createTranslatedMenuPdfFile(
+                            menuId = id,
+                            folderUri = uiEvent.folderUri,
+                            dishList = getDishList(),
+                            translateLanguage = language,
+                        )
+                    } ?: createMenuPdfFile(
+                        menuId = id,
+                        folderUri = uiEvent.folderUri,
+                        dishList = getDishList(),
+                    )
+                } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
+            }
 
-                setUiState(ContentUiStates.Show)
+            is ContentUiEvents.DownloadDishAndSectionLists -> {
+                menuIdVM?.let { id ->
+                    getDishAndSectionDataList(menuId = id)
+                } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
+            }
+
+            is ContentUiEvents.CreateSectionItem -> {
+                setUiIntent(
+                    ContentUiIntents.GoToEditSectionScreen(
+                        sectionData = SectionData(
+                            id = UUID.randomUUID().toString(),
+                        )
+                    )
+                )
+            }
+
+            is ContentUiEvents.SaveSectionItem -> {
+                menuIdVM?.let { id ->
+                    saveSectionItem(
+                        sectionData = uiEvent.sectionData,
+                        sectionList = getSectionList(),
+                        menuId = id,
+                    )
+                } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
+            }
+
+            is ContentUiEvents.EditSectionItem -> {
+                setUiIntent(
+                    ContentUiIntents.GoToEditSectionScreen(
+                        sectionData = uiEvent.sectionData
+                    )
+                )
+            }
+
+            is ContentUiEvents.DeleteSection -> {}
+            is ContentUiEvents.ShowDishListOfSection -> {
+                getDishListOfTheSpecificSection(
+                    dishList = getDishList(),
+                    sectionData = uiEvent.sectionData
+                )
+            }
+
+            is ContentUiEvents.SaveInfoImage -> {
+
+            }
+
+            is ContentUiEvents.SaveMenuInfo -> {
+
             }
         }
     }
@@ -198,8 +253,8 @@ class ContentViewModel @Inject constructor(
                 },
                 onMenuId = { menuId ->
                     menuIdVM = menuId
-                    setUiIntent(ContentUiIntents.GoToDishListScreen)
-                    getDishDataList(menuId)
+                    setUiIntent(ContentUiIntents.GoToSectionListScreen)
+                    getDishAndSectionDataList(menuId)
                 },
                 onErrorMessage = { errorMessage ->
                     setUiIntent(ContentUiIntents.ShowSnackBarMsg(errorMessage))
@@ -262,7 +317,8 @@ class ContentViewModel @Inject constructor(
                 userId = userId,
                 onMenuId = { menuId ->
                     menuIdVM = menuId
-                    setUiIntent(ContentUiIntents.GoToDishListScreen)
+                    setUiIntent(ContentUiIntents.GoToSectionListScreen)
+                    getDishAndSectionDataList(menuId)
                 },
                 onErrorMessage = { message ->
                     setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
@@ -306,13 +362,13 @@ class ContentViewModel @Inject constructor(
 //        }
 //    }
 
-    private fun setInitialImage(
+    private fun setUpdatedDishImage(
         imageUri: Uri,
         dishData: DishData,
     ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editDishItemActionsInterface.setInitialImage(
+            editDishItemActionsInterface.setUpdatedDishImage(
                 imageUri = imageUri,
                 dishData = dishData,
                 onUpdatedDish = { updatedDishData ->
@@ -341,10 +397,10 @@ class ContentViewModel @Inject constructor(
 //        }
     }
 
-    private fun updateDishImage(imageBitmap: Bitmap, dishData: DishData) {
+    private fun transformUpdatedDishImage(imageBitmap: Bitmap, dishData: DishData) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editDishItemActionsInterface.updateDishImage(
+            editDishItemActionsInterface.transformUpdatedDishImage(
                 imageBitmap = imageBitmap,
                 dishData = dishData,
                 onUpdatedDish = { updatedDishData ->
@@ -485,7 +541,7 @@ class ContentViewModel @Inject constructor(
 //        }
     }
 
-    private fun createMenuDocFile(menuId: String, folderUri: Uri, dishList: List<DishData>) {
+    private fun createMenuPdfFile(menuId: String, folderUri: Uri, dishList: List<DishData>) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
             pdfFileActionsInterface.createMenuPdfFile(
@@ -551,7 +607,7 @@ class ContentViewModel @Inject constructor(
 //        }
     }
 
-    private fun createTranslatedMenuDocFile(
+    private fun createTranslatedMenuPdfFile(
         menuId: String,
         folderUri: Uri,
         dishList: List<DishData>,
@@ -698,5 +754,146 @@ class ContentViewModel @Inject constructor(
 //            continuation.resume(newDishList.values.toList())
 //        }
 //    }
+
+    private fun getDishAndSectionDataList(menuId: String) {
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            getDataActionsInterface.getSectionAndDishDataLists(
+                menuId = menuId,
+                onData = { dishList, sectionList ->
+                    setDishList(dishList)
+                    setSectionList(sectionList)
+                    setUiState(ContentUiStates.Show)
+                },
+                onErrorMessage = {
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg(it))
+                    setUiState(ContentUiStates.Error)
+                }
+            )
+        }
+    }
+
+    private fun saveSectionItem(
+        sectionData: SectionData,
+        sectionList: List<SectionData>,
+        menuId: String
+    ) {
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            editSectionListActionsInterface.saveSectionItem(
+                data = sectionData,
+                menuId = menuId,
+                documentId = sectionData.id,
+                sectionList = sectionList,
+                onUpdatedSectionList = { list: List<SectionData> ->
+                    setSectionList(list)
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg("The section was saved"))
+                    setUiState(ContentUiStates.Show)
+                },
+                onErrorMessage = { message ->
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
+                    setUiState(ContentUiStates.Show)
+                }
+            )
+        }
+    }
+
+    private fun getDishListOfTheSpecificSection(
+        dishList: List<DishData>,
+        sectionData: SectionData
+    ) {
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            getDataActionsInterface.getDishDataOfTheSpecificSection(
+                dishDataList = dishList,
+                sectionId = sectionData.id,
+                onDishList = { dishList ->
+                    setDishList(dishList)
+                    setUiIntent(ContentUiIntents.GoToDishListScreen(sectionData))
+                    setUiState(ContentUiStates.Show)
+                }
+            )
+        }
+    }
+
+    private fun saveMenuInfo(menuId: String, menuInfoData: MenuInfoData) {
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            editMenuInfoActionsInterface.saveMenuInfoData(
+                menuId = menuId,
+                menuInfoData = menuInfoData,
+                onSuccess = {
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg("The info was saved"))
+                    setUiState(ContentUiStates.Show)
+                },
+                onErrorMessage = { message ->
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
+                    setUiState(ContentUiStates.Show)
+                }
+            )
+        }
+    }
+
+    private fun getMenuInfoData(menuId: String) {
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            getDataActionsInterface.getMenuInfoData(
+                menuId = menuId,
+                onMenuInfoData = { data ->
+                    setMenuInfoData(data)
+                },
+                onEmptyMenuInfoData = {
+                    setMenuInfoData(MenuInfoData())
+                },
+                onErrorMessage = { message ->
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
+                    setUiState(ContentUiStates.Error)
+                },
+            )
+        }
+    }
+
+    private fun getInfoImageList(menuId: String) {
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            getDataActionsInterface.getInfoImageDataList(
+                menuId = menuId,
+                onInfoImageList = { data ->
+                    setInfoImageData(data)
+                    setUiState(ContentUiStates.Show)
+                },
+                onErrorMessage = {message ->
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
+                    setUiState(ContentUiStates.Error)
+                }
+            )
+        }
+    }
+
+    private fun saveInfoImageItem(
+        menuId: String,
+        uri: Uri,
+        imageId: String,
+        infoImageList: List<InfoImageData>,
+    ){
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            editInfoImageListActionsInterface.saveInfoImageItem(
+                menuId = menuId,
+                imageId = imageId,
+                uri = uri,
+                infoImageList = infoImageList,
+                onInfoImageListUpdated = {updatedList ->
+                    setInfoImageData(updatedList)
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg("The image was saved"))
+                    setUiState(ContentUiStates.Show)
+                },
+                onErrorMessage = {message ->
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
+                    setUiState(ContentUiStates.Show)
+                }
+            )
+        }
+    }
 
 }

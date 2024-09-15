@@ -25,7 +25,7 @@ internal fun CreateMenuView(
     modifier: Modifier = Modifier,
     eventHandler: (ContentUiEvents) -> Unit,
     uiState: ContentUiStates,
-    innerPadding: PaddingValues,
+    innerPadding: PaddingValues = PaddingValues(),
 ) {
     Column(
         modifier = modifier

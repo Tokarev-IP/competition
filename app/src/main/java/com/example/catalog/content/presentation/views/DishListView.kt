@@ -25,8 +25,9 @@ internal fun DishListView(
     isEnabled: Boolean = true,
     dishList: List<DishData>,
     eventHandler: (ContentUiEvents) -> Unit,
-    innerPadding: PaddingValues,
+    innerPadding: PaddingValues = PaddingValues(),
     onCardClick: (DishData) -> Unit,
+    sectionId: String,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize().padding(innerPadding),
@@ -43,7 +44,7 @@ internal fun DishListView(
                 },
                 onDelete = {
                     eventHandler(
-                        ContentUiEvents.DeleteDish(dishData = dishList[it])
+                        ContentUiEvents.DeleteDishItem(dishData = dishList[it])
                     )
                 },
                 onCardClick = { onCardClick(dishList[it]) },
@@ -62,7 +63,7 @@ internal fun DishListView(
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
                 onClick = {
-                    eventHandler(ContentUiEvents.CreateDishItem)
+                    eventHandler(ContentUiEvents.CreateDishItem(sectionId = sectionId))
                 },
                 enabled = isEnabled,
             ) {

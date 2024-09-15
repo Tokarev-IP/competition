@@ -16,18 +16,18 @@ class EditDishItemActions @Inject constructor(
     private val transformImageUseCaseInterface: TransformImageUseCaseInterface,
 ) : EditDishItemActionsInterface {
 
-    override suspend fun updateDishImage(
+    override suspend fun transformUpdatedDishImage(
         imageBitmap: Bitmap,
         dishData: DishData,
         onUpdatedDish: (DishData) -> Unit,
         onErrorMessage: (String) -> Unit
     ) {
         try {
-            val bitmap = withContext(Dispatchers.Default) {
+            val bitmap = withContext(Dispatchers.IO) {
                 transformBitmapImageUseCaseInterface.segmentImageFromBitmap(imageBitmap)
             }
 
-            val croppedBitmap = withContext(Dispatchers.Default) {
+            val croppedBitmap = withContext(Dispatchers.IO) {
                 transformBitmapImageUseCaseInterface.cropBitmapToForeground(bitmap)
             }
             onUpdatedDish(dishData.copy(updatedImageModel = croppedBitmap))
@@ -55,7 +55,7 @@ class EditDishItemActions @Inject constructor(
         }
     }
 
-    override suspend fun setInitialImage(
+    override suspend fun setUpdatedDishImage(
         imageUri: Uri,
         dishData: DishData,
         onUpdatedDish: (DishData) -> Unit,
@@ -63,10 +63,10 @@ class EditDishItemActions @Inject constructor(
         quality: Int,
     ) {
         try {
-            val bitmap = withContext(Dispatchers.Default) {
+            val bitmap = withContext(Dispatchers.IO) {
                 transformImageUseCaseInterface.getBitmapFromUri(imageUri)
             }
-            val compressedBitmap = withContext(Dispatchers.Default) {
+            val compressedBitmap = withContext(Dispatchers.IO) {
                 transformImageUseCaseInterface.compressBitmap(
                     bitmap = bitmap,
                     quality = quality,
@@ -81,7 +81,7 @@ class EditDishItemActions @Inject constructor(
 }
 
 interface EditDishItemActionsInterface {
-    suspend fun updateDishImage(
+    suspend fun transformUpdatedDishImage(
         imageBitmap: Bitmap,
         dishData: DishData,
         onUpdatedDish: (DishData) -> Unit,
@@ -95,7 +95,7 @@ interface EditDishItemActionsInterface {
         onErrorMessage: (String) -> Unit
     )
 
-    suspend fun setInitialImage(
+    suspend fun setUpdatedDishImage(
         imageUri: Uri,
         dishData: DishData,
         onUpdatedDish: (DishData) -> Unit,

@@ -2,6 +2,7 @@ package com.example.catalog.content.domain.usecases.network
 
 import com.example.catalog.content.data.interfaces.FirestoreUploadInterface
 import com.example.catalog.content.domain.data.DishDataFirebase
+import com.example.catalog.content.domain.data.InfoImageFirebase
 import com.example.catalog.content.domain.data.MenuIdFirebase
 import com.example.catalog.content.domain.data.MenuInfoFirebase
 import com.example.catalog.content.domain.data.SectionDataFirebase
@@ -11,7 +12,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class UploadDataUseCase @Inject constructor(
-    private val firestoreAddInterface: FirestoreUploadInterface,
+    private val firestoreUploadInterface: FirestoreUploadInterface,
 ) : UploadDataUseCaseInterface {
 
     override suspend fun uploadMenuId(
@@ -20,7 +21,7 @@ class UploadDataUseCase @Inject constructor(
         menuIdFirebase: MenuIdFirebase,
     ) {
         return suspendCancellableCoroutine { continuation ->
-            firestoreAddInterface.uploadOneCollectionData(
+            firestoreUploadInterface.uploadOneCollectionData(
                 data = menuIdFirebase,
                 collection = collection,
                 documentId = userId,
@@ -40,7 +41,7 @@ class UploadDataUseCase @Inject constructor(
         menuId: String,
     ) {
         return suspendCancellableCoroutine { continuation ->
-            firestoreAddInterface.uploadOneCollectionData(
+            firestoreUploadInterface.uploadOneCollectionData(
                 data = data,
                 collection = collection,
                 documentId = menuId,
@@ -59,15 +60,15 @@ class UploadDataUseCase @Inject constructor(
         collection2: String,
         data: DishDataFirebase,
         menuId: String,
-        documentId: String,
+        dishId: String,
     ) {
         return suspendCancellableCoroutine { continuation ->
-            firestoreAddInterface.uploadTwoCollectionData(
+            firestoreUploadInterface.uploadTwoCollectionData(
                 data = data,
                 collection1 = collection1,
                 collection2 = collection2,
                 documentPath = menuId,
-                documentId = documentId,
+                documentId = dishId,
                 onSuccess = {
                     continuation.resume(Unit)
                 },
@@ -78,20 +79,44 @@ class UploadDataUseCase @Inject constructor(
         }
     }
 
-    override suspend fun uploadMenuSection(
+    override suspend fun uploadMenuSectionData(
         collection1: String,
         collection2: String,
         data: SectionDataFirebase,
         menuId: String,
-        documentId: String
+        sectionId: String
     ) {
         return suspendCancellableCoroutine { continuation ->
-            firestoreAddInterface.uploadTwoCollectionData(
+            firestoreUploadInterface.uploadTwoCollectionData(
                 data = data,
                 collection1 = collection1,
                 collection2 = collection2,
                 documentPath = menuId,
-                documentId = documentId,
+                documentId = sectionId,
+                onSuccess = {
+                    continuation.resume(Unit)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
+
+    override suspend fun uploadInfoImageData(
+        collection1: String,
+        collection2: String,
+        data: InfoImageFirebase,
+        menuId: String,
+        imageId: String
+    ) {
+        return suspendCancellableCoroutine { continuation ->
+            firestoreUploadInterface.uploadTwoCollectionData(
+                data = data,
+                collection1 = collection1,
+                collection2 = collection2,
+                documentPath = menuId,
+                documentId = imageId,
                 onSuccess = {
                     continuation.resume(Unit)
                 },
@@ -111,7 +136,7 @@ interface UploadDataUseCaseInterface {
     )
 
     suspend fun uploadMenuInfoData(
-        collection: String = "menu",
+        collection: String = "info",
         data: MenuInfoFirebase,
         menuId: String,
     )
@@ -121,14 +146,22 @@ interface UploadDataUseCaseInterface {
         collection2: String = "menu",
         data: DishDataFirebase,
         menuId: String,
-        documentId: String,
+        dishId: String,
     )
 
-    suspend fun uploadMenuSection(
+    suspend fun uploadMenuSectionData(
         collection1: String = "data",
         collection2: String = "section",
         data: SectionDataFirebase,
         menuId: String,
-        documentId: String,
+        sectionId: String,
+    )
+
+    suspend fun uploadInfoImageData(
+        collection1: String = "data",
+        collection2: String = "image",
+        data: InfoImageFirebase,
+        menuId: String,
+        imageId: String,
     )
 }

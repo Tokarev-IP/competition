@@ -1,9 +1,6 @@
 package com.example.catalog.login.presentation.base
 
 import androidx.lifecycle.ViewModel
-import com.example.catalog.content.presentation.base.EventInterface
-import com.example.catalog.content.presentation.base.IntentInterface
-import com.example.catalog.content.presentation.base.StateInterface
 import com.example.catalog.login.presentation.LoginUiEvents
 import com.example.catalog.login.presentation.LoginUiIntents
 import com.example.catalog.login.presentation.LoginUiStates

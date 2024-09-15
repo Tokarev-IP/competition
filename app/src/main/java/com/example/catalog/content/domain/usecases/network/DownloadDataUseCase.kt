@@ -3,10 +3,15 @@ package com.example.catalog.content.domain.usecases.network
 import com.example.catalog.content.data.interfaces.FirestoreDownloadInterface
 import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.domain.data.DishDataFirebase
+import com.example.catalog.content.domain.data.InfoImageData
+import com.example.catalog.content.domain.data.InfoImageFirebase
 import com.example.catalog.content.domain.data.MenuIdFirebase
 import com.example.catalog.content.domain.data.MenuInfoFirebase
+import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.domain.data.SectionDataFirebase
-import com.example.catalog.content.domain.data.toDishData
+import com.example.catalog.content.domain.extensions.toDishData
+import com.example.catalog.content.domain.extensions.toInfoImageData
+import com.example.catalog.content.domain.extensions.toSectionData
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -18,7 +23,7 @@ class DownloadDataUseCase @Inject constructor(
     private val firestoreDownloadInterface: FirestoreDownloadInterface,
 ) : DownloadDataUseCaseInterface {
 
-    override suspend fun downloadMenuId(
+    override suspend fun downloadMenuIdData(
         collection: String,
         userId: String,
     ): MenuIdFirebase? {
@@ -88,18 +93,46 @@ class DownloadDataUseCase @Inject constructor(
         collection1: String,
         collection2: String,
         menuId: String,
-    ): List<SectionDataFirebase> {
+    ): List<SectionData> {
         return suspendCancellableCoroutine { continuation ->
             firestoreDownloadInterface.downloadDataFromTwoCollection(
                 collection1 = collection1,
                 collection2 = collection2,
                 documentPath = menuId,
                 onSuccess = { result: QuerySnapshot ->
-                    val dataList = mutableListOf<SectionDataFirebase>()
+                    val dataList = mutableListOf<SectionData>()
                     for (document in result) {
                         if (document != null) {
                             val dataFirebase = document.toObject(SectionDataFirebase::class.java)
-                            dataList.add(dataFirebase)
+                            val data = dataFirebase.toSectionData()
+                            dataList.add(data)
+                        }
+                    }
+                    continuation.resume(dataList)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
+
+    override suspend fun downloadInfoImageListData(
+        collection1: String,
+        collection2: String,
+        menuId: String,
+    ): List<InfoImageData> {
+        return suspendCancellableCoroutine { continuation ->
+            firestoreDownloadInterface.downloadDataFromTwoCollection(
+                collection1 = collection1,
+                collection2 = collection2,
+                documentPath = menuId,
+                onSuccess = { result: QuerySnapshot ->
+                    val dataList = mutableListOf<InfoImageData>()
+                    for (document in result) {
+                        if (document != null) {
+                            val dataFirebase = document.toObject(InfoImageFirebase::class.java)
+                            dataList.add(dataFirebase.toInfoImageData())
                         }
                     }
                     continuation.resume(dataList)
@@ -113,13 +146,13 @@ class DownloadDataUseCase @Inject constructor(
 }
 
 interface DownloadDataUseCaseInterface {
-    suspend fun downloadMenuId(
+    suspend fun downloadMenuIdData(
         collection: String = "id",
         userId: String,
     ): MenuIdFirebase?
 
     suspend fun downloadMenuInfoData(
-        collection: String = "menu",
+        collection: String = "info",
         menuId: String,
     ): MenuInfoFirebase?
 
@@ -133,5 +166,11 @@ interface DownloadDataUseCaseInterface {
         collection1: String = "data",
         collection2: String = "section",
         menuId: String,
-    ): List<SectionDataFirebase>
+    ): List<SectionData>
+
+    suspend fun downloadInfoImageListData(
+        collection1: String = "data",
+        collection2: String = "image",
+        menuId: String,
+    ): List<InfoImageData>
 }

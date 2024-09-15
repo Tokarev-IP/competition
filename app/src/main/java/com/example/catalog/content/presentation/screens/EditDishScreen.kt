@@ -50,9 +50,9 @@ internal fun EditDishScreen(
 
     val pickPictureLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            if (uri != null) {
-                contentViewModel.setUiEvent(ContentUiEvents.SetInitialImage(uri))
-            }
+            uri?.let { notNullUri ->
+                contentViewModel.setUiEvent(ContentUiEvents.SetUpdatedDishImage(notNullUri))
+            } ?: run { snackBarMsg = "No image was selected" }
         }
 
     if (uiIntent is ContentUiIntents.ShowSnackBarMsg) {
@@ -81,12 +81,15 @@ internal fun EditDishScreen(
         },
         topBar = {
             TopAppBar(
-                title = { Text(text = "Dish") },
+                title = { Text(text = "Edit dish") },
                 navigationIcon = {
                     IconButton(
                         onClick = { contentViewModel.setUiEvent(ContentUiEvents.GoBack) }
                     ) {
-                        Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Go back")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = "Go back"
+                        )
                     }
                 }
             )
@@ -118,7 +121,7 @@ internal fun EditDishScreen(
             },
             innerPadding = innerPadding,
             onEditNewImage = { bitmap ->
-                contentViewModel.setUiEvent(ContentUiEvents.CreateUpdatedImage(bitmap))
+                contentViewModel.setUiEvent(ContentUiEvents.TransformUpdatedDishImage(bitmap))
             },
         )
     }

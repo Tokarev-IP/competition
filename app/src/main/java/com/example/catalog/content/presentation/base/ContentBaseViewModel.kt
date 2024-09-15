@@ -2,7 +2,9 @@ package com.example.catalog.content.presentation.base
 
 import androidx.lifecycle.ViewModel
 import com.example.catalog.content.domain.data.DishData
-import com.example.catalog.content.domain.data.SectionDataFirebase
+import com.example.catalog.content.domain.data.InfoImageData
+import com.example.catalog.content.domain.data.MenuInfoData
+import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
@@ -49,26 +51,30 @@ abstract class ContentBaseViewModel<uiState : ContentUiStates, uiIntents : Conte
     private val dishList = MutableStateFlow<List<DishData>>(emptyList())
     private val dishListFlow = dishList.asStateFlow()
 
-    private val sectionList = MutableStateFlow<List<SectionDataFirebase>>(emptyList())
+    private val sectionList = MutableStateFlow<List<SectionData>>(emptyList())
     private val sectionListFlow = sectionList.asStateFlow()
 
-    protected fun setDishItemData(data: DishData) {
-        dishItemData.value = data
-    }
+    private val menuInfoData = MutableStateFlow<MenuInfoData>(MenuInfoData())
+    private val menuInfoDataFlow = menuInfoData.asStateFlow()
 
-    protected fun setDishList(list: List<DishData>) {
-        dishList.value = list
-    }
+    private val infoImageData = MutableStateFlow<List<InfoImageData>>(emptyList())
+    private val infoImageDataFlow = infoImageData.asStateFlow()
 
-    protected fun setSectionList(list: List<SectionDataFirebase>) {
-        sectionList.value = list
-    }
+    protected fun setDishItemData(data: DishData) { dishItemData.value = data }
+    protected fun setDishList(list: List<DishData>) { dishList.value = list }
+    protected fun setSectionList(list: List<SectionData>) { sectionList.value = list }
+    protected fun setMenuInfoData(data: MenuInfoData) { menuInfoData.value = data }
+    protected fun setInfoImageData(list: List<InfoImageData>) { infoImageData.value = list }
 
     protected fun getDishItemData() = dishItemData.value
     protected fun getDishList() = dishList.value
     protected fun getSectionList() = sectionList.value
+    protected fun getMenuInfoData() = menuInfoData.value
+    protected fun getInfoImageData() = infoImageData.value
 
     fun getDishItemDataFlow() = dishItemDataFlow
     fun getDishListFlow() = dishListFlow
     fun getSectionListFlow() = sectionListFlow
+    fun getMenuInfoDataFlow() = menuInfoDataFlow
+    fun getInfoImageDataFlow() = infoImageDataFlow
 }

@@ -32,7 +32,7 @@ class PdfFileActions @Inject constructor(
             for (dish in dishList) {
                 var imageBitmap: Bitmap? = null
 
-                if (dish.imageModel != null) {
+                dish.imageModel?.let {
                     val imageByteArray: ByteArray =
                         withContext(Dispatchers.IO) {
                             downloadFileUseCaseInterface.downloadDishImageFile(
@@ -61,10 +61,6 @@ class PdfFileActions @Inject constructor(
                     folderUri = folderUri,
                     pdfDishList = pdfDishList,
                 )
-//                    createDicFileInterface.createMenuDoc(
-//                        folderUri = folderUri,
-//                        dishList = docDishList,
-//                    )
             }
             onSuccess("PDF file was created")
         } catch (e: Exception) {
@@ -100,7 +96,7 @@ class PdfFileActions @Inject constructor(
 
                 var imageBitmap: Bitmap? = null
 
-                if (dish.imageModel != null) {
+                dish.imageModel?.let {
                     val imageByteArray: ByteArray =
                         withContext(Dispatchers.IO) {
                             downloadFileUseCaseInterface.downloadDishImageFile(
@@ -130,13 +126,6 @@ class PdfFileActions @Inject constructor(
                     pdfDishList = pdfDishList,
                 )
             }
-//            withContext(Dispatchers.IO) {
-//                createDicFileInterface.createMenuDoc(
-//                    folderUri = folderUri,
-//                    dishList = docDishList,
-//                    language = translateLanguage,
-//                )
-//            }
             onSuccess("PDF file was created")
         } catch (e: Exception) {
             onErrorMessage(e.message.toString())

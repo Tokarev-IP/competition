@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,19 +24,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.catalog.content.domain.data.SectionData
+import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.common.CancelAndAcceptButtons
 
 @Composable
 internal fun EditSectionView(
     modifier: Modifier = Modifier,
-    name: String = "",
-    id: String = "",
+    sectionData: SectionData,
     isEnabled: Boolean = true,
-    onCancel: () -> Unit = {},
-    onAccept: (name: String, id: String) -> Unit,
-    innerPadding: PaddingValues,
+    onEventHandler: (ContentUiEvents) -> Unit,
+    innerPadding: PaddingValues = PaddingValues(),
 ) {
-    var sectionName: String by rememberSaveable { mutableStateOf(name) }
+    var sectionName: String by rememberSaveable { mutableStateOf(sectionData.name) }
 
     Column(
         modifier = modifier
@@ -48,7 +47,6 @@ internal fun EditSectionView(
     ) {
         OutlinedTextField(
             modifier = modifier
-                .fillMaxHeight(0.9f)
                 .padding(horizontal = 12.dp),
             value = sectionName,
             onValueChange = { text: String ->
@@ -70,11 +68,12 @@ internal fun EditSectionView(
         Spacer(modifier = modifier.height(36.dp))
 
         CancelAndAcceptButtons(
-            onCancel = { onCancel() },
+            onCancel = { onEventHandler(ContentUiEvents.GoBack) },
             onAccept = {
-                onAccept(
-                    sectionName.trim(),
-                    id,
+                onEventHandler(
+                    ContentUiEvents.SaveSectionItem(
+                        sectionData.copy(name = sectionName)
+                    )
                 )
             },
             cancelText = "Cancel",

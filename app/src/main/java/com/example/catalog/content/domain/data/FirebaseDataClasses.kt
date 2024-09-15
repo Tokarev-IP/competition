@@ -42,18 +42,22 @@ data class DishDataFirebase @JvmOverloads constructor(
 
     @get:PropertyName("section_id")
     @set:PropertyName("section_id")
-    var sectionId: Int = 0,
+    var sectionId: String = "",
 )
 
 @Serializable
 data class MenuInfoFirebase @JvmOverloads constructor(
-    @get:PropertyName("id")
-    @set:PropertyName("id")
-    var id: String = "",
-
     @get:PropertyName("name")
     @set:PropertyName("name")
     var name: String = "",
+
+    @get:PropertyName("description")
+    @set:PropertyName("description")
+    var description: String = "",
+
+    @get:PropertyName("image")
+    @set:PropertyName("image")
+    var image: String? = null,
 )
 
 @Serializable
@@ -69,4 +73,15 @@ data class SectionDataFirebase @JvmOverloads constructor(
     @get:PropertyName("position")
     @set:PropertyName("position")
     var position: Int = 0,
+)
+
+@Serializable
+data class InfoImageFirebase @JvmOverloads constructor(
+    @get:PropertyName("id")
+    @set:PropertyName("id")
+    var id: String = "",
+
+    @get:PropertyName("image")
+    @set:PropertyName("image")
+    var image: String = "",
 )

@@ -11,6 +11,25 @@ data class DishData(
     val weight: Double = 0.0,
     val imageModel: Uri? = null,
     val updatedImageModel: Bitmap? = null,
+    val sectionId: String = "",
+)
+
+data class SectionData(
+    val id: String = "",
+    val name: String = "",
+    val position: Int = 0,
+)
+
+data class MenuInfoData(
+    val name: String = "",
+    val description: String = "",
+    val imageModel: Uri? = null,
+    val updatedImageModel: Uri? = null,
+)
+
+data class InfoImageData (
+    val id: String = "",
+    val imageModel: Uri = Uri.EMPTY,
 )
 
 class DocDishData(

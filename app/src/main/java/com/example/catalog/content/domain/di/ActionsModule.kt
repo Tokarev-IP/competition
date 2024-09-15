@@ -4,6 +4,12 @@ import com.example.catalog.content.presentation.viewmodel.actions.EditDishItemAc
 import com.example.catalog.content.presentation.viewmodel.actions.EditDishItemActionsInterface
 import com.example.catalog.content.presentation.viewmodel.actions.EditDishListActions
 import com.example.catalog.content.presentation.viewmodel.actions.EditDishListActionsInterface
+import com.example.catalog.content.presentation.viewmodel.actions.EditInfoImageListActions
+import com.example.catalog.content.presentation.viewmodel.actions.EditInfoImageListActionsInterface
+import com.example.catalog.content.presentation.viewmodel.actions.EditMenuInfoActions
+import com.example.catalog.content.presentation.viewmodel.actions.EditMenuInfoActionsInterface
+import com.example.catalog.content.presentation.viewmodel.actions.EditSectionListActions
+import com.example.catalog.content.presentation.viewmodel.actions.EditSectionListActionsInterface
 import com.example.catalog.content.presentation.viewmodel.actions.GetDataActions
 import com.example.catalog.content.presentation.viewmodel.actions.GetDataActionsInterface
 import com.example.catalog.content.presentation.viewmodel.actions.MenuActions
@@ -22,7 +28,7 @@ interface ActionsModule {
 
     @Singleton
     @Binds
-    fun bindEditDishItemActionsInterface(impl: EditDishItemActions) : EditDishItemActionsInterface
+    fun bindEditDishItemActionsInterface(impl: EditDishItemActions): EditDishItemActionsInterface
 
     @Singleton
     @Binds
@@ -39,4 +45,16 @@ interface ActionsModule {
     @Singleton
     @Binds
     fun bindPdfFileActionsInterface(impl: PdfFileActions): PdfFileActionsInterface
+
+    @Singleton
+    @Binds
+    fun bindEditSectionListActionsInterface(impl: EditSectionListActions): EditSectionListActionsInterface
+
+    @Singleton
+    @Binds
+    fun bindEditInfoImageListActionsInterface(impl: EditInfoImageListActions): EditInfoImageListActionsInterface
+
+    @Singleton
+    @Binds
+    fun bindEditMenuInfoActionsInterface(impl: EditMenuInfoActions): EditMenuInfoActionsInterface
 }

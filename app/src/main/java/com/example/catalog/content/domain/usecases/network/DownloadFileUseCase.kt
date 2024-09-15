@@ -12,27 +12,7 @@ class DownloadFileUseCase @Inject constructor(
     private val firebaseStorageDownloadRepository: FirebaseStorageDownloadRepository,
 ) : DownloadFileUseCaseInterface {
 
-    override suspend fun downloadUriOfMenuPicture(
-        pathString: String,
-        menuId: String,
-    ): Uri {
-        return suspendCancellableCoroutine { continuation ->
-            firebaseStorageDownloadRepository.downloadUriOfFile(
-                pathString = "$menuId/$pathString/main_picture",
-                onSuccess = { uri: Uri? ->
-                    if (uri != null)
-                        continuation.resume(uri)
-                    else
-                        continuation.resumeWithException(NullPointerException("Uri is null"))
-                },
-                onFailure = { e: Exception ->
-                    continuation.resumeWithException(e)
-                }
-            )
-        }
-    }
-
-    override suspend fun downloadUriOfDishPicture(
+    override suspend fun downloadUriOfDishImage(
         pathString: String,
         menuId: String,
         dishId: String,
@@ -41,10 +21,9 @@ class DownloadFileUseCase @Inject constructor(
             firebaseStorageDownloadRepository.downloadUriOfFile(
                 pathString = "$menuId/$pathString/$dishId",
                 onSuccess = { uri: Uri? ->
-                    if (uri != null)
-                        continuation.resume(uri)
-                    else
-                        continuation.resumeWithException(NullPointerException("Uri is null"))
+                    uri?.let {
+                        continuation.resume(it)
+                    } ?: continuation.resumeWithException(NullPointerException("Uri is null"))
                 },
                 onFailure = { e: Exception ->
                     continuation.resumeWithException(e)
@@ -81,10 +60,45 @@ class DownloadFileUseCase @Inject constructor(
             firebaseStorageDownloadRepository.getMetadataOfFile(
                 pathString = "$menuId/$pathString/$dishId",
                 onSuccess = { metadata: StorageMetadata ->
-                    if (metadata.name == null)
+                    metadata.name?.let {
                         continuation.resume(false)
-                    else
-                        continuation.resume(true)
+                    } ?: continuation.resume(true)
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
+
+    override suspend fun downloadUriOfInfoImage(
+        pathString: String,
+        menuId: String,
+        imageId: String
+    ): Uri {
+        return suspendCancellableCoroutine { continuation ->
+            firebaseStorageDownloadRepository.downloadUriOfFile(
+                pathString = "$menuId/$pathString/$imageId",
+                onSuccess = { uri: Uri? ->
+                    uri?.let {
+                        continuation.resume(it)
+                    } ?: continuation.resumeWithException(NullPointerException("Uri is null"))
+                },
+                onFailure = { e: Exception ->
+                    continuation.resumeWithException(e)
+                }
+            )
+        }
+    }
+
+    override suspend fun downloadUriOfMenuInfoImage(pathString: String, menuId: String): Uri {
+        return suspendCancellableCoroutine { continuation ->
+            firebaseStorageDownloadRepository.downloadUriOfFile(
+                pathString = "$menuId/$pathString/$menuId",
+                onSuccess = { uri: Uri? ->
+                    uri?.let {
+                        continuation.resume(it)
+                    } ?: continuation.resumeWithException(NullPointerException("Uri is null"))
                 },
                 onFailure = { e: Exception ->
                     continuation.resumeWithException(e)
@@ -95,12 +109,7 @@ class DownloadFileUseCase @Inject constructor(
 }
 
 interface DownloadFileUseCaseInterface {
-    suspend fun downloadUriOfMenuPicture(
-        pathString: String = "pic",
-        menuId: String,
-    ): Uri
-
-    suspend fun downloadUriOfDishPicture(
+    suspend fun downloadUriOfDishImage(
         pathString: String = "dish",
         menuId: String,
         dishId: String,
@@ -117,4 +126,15 @@ interface DownloadFileUseCaseInterface {
         menuId: String,
         dishId: String,
     ): Boolean
+
+    suspend fun downloadUriOfInfoImage(
+        pathString: String = "info",
+        menuId: String,
+        imageId: String,
+    ): Uri
+
+    suspend fun downloadUriOfMenuInfoImage(
+        pathString: String = "picture",
+        menuId: String,
+    ): Uri
 }

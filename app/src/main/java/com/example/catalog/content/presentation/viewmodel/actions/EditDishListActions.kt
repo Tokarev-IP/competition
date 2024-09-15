@@ -1,8 +1,9 @@
 package com.example.catalog.content.presentation.viewmodel.actions
 
 import com.example.catalog.content.domain.data.DishData
-import com.example.catalog.content.domain.data.toDishDataFirebase
-import com.example.catalog.content.domain.usecases.logic.DishListFunctionsInterface
+import com.example.catalog.content.domain.extensions.addDishItem
+import com.example.catalog.content.domain.extensions.removeDishItem
+import com.example.catalog.content.domain.extensions.toDishDataFirebase
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCaseInterface
 import com.example.catalog.content.domain.usecases.network.DeleteDataUseCaseInterface
 import com.example.catalog.content.domain.usecases.network.DeleteFileUseCaseInterface
@@ -18,7 +19,6 @@ class EditDishListActions @Inject constructor(
     private val uploadFileUseCaseInterface: UploadFileUseCaseInterface,
     private val downloadFileUseCaseInterface: DownloadFileUseCaseInterface,
     private val uploadDataUseCaseInterface: UploadDataUseCaseInterface,
-    private val dishListFunctionsInterface: DishListFunctionsInterface,
     private val deleteDataUseCaseInterface: DeleteDataUseCaseInterface,
     private val deleteFileUseCaseInterface: DeleteFileUseCaseInterface,
 ) : EditDishListActionsInterface {
@@ -36,56 +36,44 @@ class EditDishListActions @Inject constructor(
                     withContext(Dispatchers.Default) { //transforming image to byte array
                         transformImageUseCaseInterface.getByteArrayFromBitmap(bitmap = bitmap)
                     }
-
                 withContext(Dispatchers.IO) { //uploading image to firebase
-                    uploadFileUseCaseInterface.uploadDishPictureUsingByteArray(
+                    uploadFileUseCaseInterface.uploadDishImageUsingByteArray(
                         menuId = menuId,
                         dishId = dishData.id,
                         byteArray = byteArrayOfBitmapImage,
                     )
                 }
-
                 val uri = withContext(Dispatchers.IO) { //receiving uri of uploaded image
-                    downloadFileUseCaseInterface.downloadUriOfDishPicture(
+                    downloadFileUseCaseInterface.downloadUriOfDishImage(
                         menuId = menuId,
                         dishId = dishData.id,
                     )
                 }
-
+                val newDishData = dishData.copy(imageModel = uri)
+                withContext(Dispatchers.IO) { //uploading the data of the dish to firestore
+                    uploadDataUseCaseInterface.uploadMenuDishData(
+                        data = newDishData.toDishDataFirebase(),
+                        menuId = menuId,
+                        dishId = dishData.id,
+                    )
+                }
+                val newDishList =
+                    withContext(Dispatchers.IO) { //add the data of the dish to dish list
+                        dishList.addDishItem(newDishData)
+                    }
+                onDishListUpdated(newDishList)
+            } ?: run {
                 withContext(Dispatchers.IO) { //uploading the data of the dish to firestore
                     uploadDataUseCaseInterface.uploadMenuDishData(
                         data = dishData.toDishDataFirebase(),
                         menuId = menuId,
-                        documentId = dishData.id,
+                        dishId = dishData.id,
                     )
                 }
-
                 val newDishList =
-                    withContext(Dispatchers.IO) { //add the data of the dish to dish list
-                        dishListFunctionsInterface.saveDishItemInDishList(
-                            dishData = dishData.copy(imageModel = uri),
-                            dishList = dishList,
-                        )
+                    withContext(Dispatchers.IO) { //get new dish list with updated dish
+                        dishList.addDishItem(dishData)
                     }
-
-                onDishListUpdated(newDishList)
-            } ?: run {
-
-                withContext(Dispatchers.IO) {
-                    uploadDataUseCaseInterface.uploadMenuDishData(
-                        data = dishData.toDishDataFirebase(),
-                        menuId = menuId,
-                        documentId = dishData.id,
-                    )
-                }
-
-                val newDishList = withContext(Dispatchers.IO) {
-                    dishListFunctionsInterface.saveDishItemInDishList(
-                        dishData = dishData,
-                        dishList = dishList,
-                    )
-                }
-
                 onDishListUpdated(newDishList)
             }
         } catch (e: Exception) {
@@ -102,33 +90,29 @@ class EditDishListActions @Inject constructor(
     ) {
         try {
             withContext(Dispatchers.IO) { //delete the data of the dish from firestore
-                deleteDataUseCaseInterface.deleteMenuDish(
+                deleteDataUseCaseInterface.deleteMenuDishData(
                     menuId = menuId,
                     dishId = dishId,
                 )
             }
-
-            val isImageDishExisted = withContext(Dispatchers.IO) { //check if the image of the dish exists
-                downloadFileUseCaseInterface.checkIfDishImageExists(
-                    menuId = menuId,
-                    dishId = dishId,
-                )
-            }
-
-            if (isImageDishExisted)
-                withContext(Dispatchers.IO) { //delete the image of the dish from firebase
-                    deleteFileUseCaseInterface.deleteDish(
+            val isImageDishExisted =
+                withContext(Dispatchers.IO) { //check if the image of the dish exists
+                    downloadFileUseCaseInterface.checkIfDishImageExists(
                         menuId = menuId,
                         dishId = dishId,
                     )
                 }
-
-            val newDishList = withContext(Dispatchers.IO) { //delete the data of the dish from dish list
-                dishListFunctionsInterface.deleteDishItemFromDishList(
-                    dishId = dishId,
-                    dishList = dishList,
-                )
-            }
+            if (isImageDishExisted)
+                withContext(Dispatchers.IO) { //delete the image of the dish from firebase
+                    deleteFileUseCaseInterface.deleteDishImage(
+                        menuId = menuId,
+                        dishId = dishId,
+                    )
+                }
+            val newDishList =
+                withContext(Dispatchers.IO) { //delete the data of the dish from dish list
+                    dishList.removeDishItem(dishId)
+                }
             onDishListUpdated(newDishList)
         } catch (e: Exception) {
             onErrorMessage(e.message.toString())
