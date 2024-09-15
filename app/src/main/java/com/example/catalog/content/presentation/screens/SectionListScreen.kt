@@ -32,6 +32,8 @@ import androidx.compose.ui.Modifier
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
+import com.example.catalog.content.presentation.common.ErrorStateView
+import com.example.catalog.content.presentation.common.LoadingStateView
 import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 import com.example.catalog.content.presentation.views.SectionListView
 
@@ -75,7 +77,7 @@ internal fun SectionListScreen(
         },
         topBar = {
             TopAppBar(
-                title = { /*TODO*/ },
+                title = { Text(text = "Sections") },
                 actions = {
                     IconButton(
                         onClick = { isMenuExpanded = !isMenuExpanded }
@@ -91,14 +93,16 @@ internal fun SectionListScreen(
                         onDismissRequest = { isMenuExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("") },
+                            text = { Text("Edit info images") },
                             onClick = {
+                                contentViewModel.setUiEvent(ContentUiEvents.EditInfoImageList)
                             },
                             enabled = (uiState is ContentUiStates.Show),
                         )
                         DropdownMenuItem(
-                            text = { Text("") },
+                            text = { Text("Edit menu info") },
                             onClick = {
+                                contentViewModel.setUiEvent(ContentUiEvents.EditMenuInfo)
                             },
                             enabled = (uiState is ContentUiStates.Show),
                         )
@@ -110,16 +114,8 @@ internal fun SectionListScreen(
 
         when (uiState) {
             is ContentUiStates.Error -> {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    OutlinedButton(
-                        onClick = {
-                            contentViewModel.setUiEvent(ContentUiEvents.DownloadDishAndSectionLists)
-                        },
-                        modifier = modifier.align(Alignment.Center)
-                    ) {
-                        Text(text = "Try again")
-                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh section data")
-                    }
+                ErrorStateView(innerPadding = innerPadding) {
+                    contentViewModel.setUiEvent(ContentUiEvents.DownloadDishAndSectionLists)
                 }
             }
 
@@ -134,11 +130,7 @@ internal fun SectionListScreen(
             }
 
             is ContentUiStates.Loading -> {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(
-                        modifier = modifier.align(Alignment.Center)
-                    )
-                }
+                LoadingStateView(innerPadding = innerPadding)
             }
         }
     }

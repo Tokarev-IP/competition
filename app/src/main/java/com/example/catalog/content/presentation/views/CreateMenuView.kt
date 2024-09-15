@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiStates
+import com.example.catalog.content.presentation.common.ErrorStateView
+import com.example.catalog.content.presentation.common.LoadingStateView
 
 @Composable
 internal fun CreateMenuView(
@@ -36,7 +38,7 @@ internal fun CreateMenuView(
     ) {
         when (uiState) {
             is ContentUiStates.Loading -> {
-                CircularProgressIndicator()
+                LoadingStateView(innerPadding = innerPadding)
             }
 
             is ContentUiStates.Show -> {
@@ -51,14 +53,8 @@ internal fun CreateMenuView(
             }
 
             is ContentUiStates.Error -> {
-                Text(text = "Please, try again")
-                Spacer(modifier = Modifier.height(20.dp))
-                OutlinedButton(
-                    onClick = {
-                        eventHandler(ContentUiEvents.CheckMenuId)
-                    }) {
-                    Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
-                    Text(text = "Try again")
+                ErrorStateView(innerPadding = innerPadding){
+                    eventHandler(ContentUiEvents.CheckMenuId)
                 }
             }
         }

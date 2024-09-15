@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -43,6 +44,9 @@ import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
+import com.example.catalog.content.presentation.common.ErrorStateView
+import com.example.catalog.content.presentation.common.GoBackNavigationButton
+import com.example.catalog.content.presentation.common.LoadingStateView
 import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 import com.example.catalog.content.presentation.views.DishListView
 import com.example.catalog.content.presentation.views.dialogs.ChooseLanguageDialogView
@@ -65,6 +69,7 @@ internal fun DishListScreen(
     var selectedLanguage by remember { mutableStateOf<String?>(null) }
     var dishData by remember { mutableStateOf<DishData?>(null) }
     var snackBarMsg by remember { mutableStateOf<String?>(null) }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     val chooseFolderLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { uri: Uri? ->
@@ -77,8 +82,6 @@ internal fun DishListScreen(
                 )
             } ?: run { snackBarMsg = "No folder was selected" }
         }
-
-    val snackBarHostState = remember { SnackbarHostState() }
 
     if (uiIntent is ContentUiIntents.ShowSnackBarMsg) {
         snackBarMsg = (uiIntent as ContentUiIntents.ShowSnackBarMsg).msg
@@ -101,13 +104,8 @@ internal fun DishListScreen(
             TopAppBar(
                 title = { Text(text = sectionData.name) },
                 navigationIcon = {
-                    IconButton(
-                        onClick = { contentViewModel.setUiEvent(ContentUiEvents.GoBack) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Go back"
-                        )
+                    GoBackNavigationButton {
+                        contentViewModel.setUiEvent(ContentUiEvents.GoBack)
                     }
                 },
                 actions = {
@@ -120,7 +118,6 @@ internal fun DishListScreen(
                                 contentDescription = "Open action menu"
                             )
                         }
-
                         DropdownMenu(
                             expanded = isMenuExpanded,
                             onDismissRequest = { isMenuExpanded = false }
@@ -158,13 +155,7 @@ internal fun DishListScreen(
 
         when (uiState) {
             is ContentUiStates.Loading -> {
-                Box(
-                    modifier = modifier.fillMaxSize()
-                ) {
-                    CircularProgressIndicator(
-                        modifier = modifier.align(Alignment.Center)
-                    )
-                }
+                LoadingStateView(innerPadding = innerPadding)
             }
 
             is ContentUiStates.Show -> {
@@ -183,16 +174,8 @@ internal fun DishListScreen(
             }
 
             is ContentUiStates.Error -> {
-                Box(
-                    modifier = modifier.fillMaxSize()
-                ) {
-                    OutlinedButton(
-                        modifier = modifier.align(Alignment.Center),
-                        onClick = { contentViewModel.setUiEvent(ContentUiEvents.DownloadMenuList) }
-                    ) {
-                        Icon(Icons.Outlined.Refresh, contentDescription = "Refresh loading")
-                        Text(text = "Try again")
-                    }
+                ErrorStateView(innerPadding = innerPadding) {
+                    contentViewModel.setUiEvent(ContentUiEvents.DownloadMenuList)
                 }
             }
         }

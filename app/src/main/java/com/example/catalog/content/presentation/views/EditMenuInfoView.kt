@@ -1,6 +1,5 @@
 package com.example.catalog.content.presentation.views
 
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -38,15 +37,12 @@ internal fun EditMenuInfoView(
     onEventHandler: (ContentUiEvents) -> Unit,
     isEnabled: Boolean = true,
     onChooseImage: () -> Unit,
+    updatedImageModel: Uri?,
+    onClearUpdatedImageModel: () -> Unit,
 ) {
     var nameText by remember { mutableStateOf(menuInfoData.name) }
     var descriptionText by remember { mutableStateOf(menuInfoData.description) }
     var imageModel: Uri? by remember { mutableStateOf(menuInfoData.imageModel) }
-    var updatedImageModel: Bitmap? by remember { mutableStateOf(menuInfoData.updatedImageModel) }
-
-    menuInfoData.apply {
-        updatedImageModel = menuInfoData.updatedImageModel
-    }
 
     LazyColumn(
         modifier = modifier
@@ -64,7 +60,7 @@ internal fun EditMenuInfoView(
                 onChoosePicture = { onChooseImage() },
                 onClearPicture = {
                     imageModel = null
-                    updatedImageModel = null
+                    onClearUpdatedImageModel()
                 },
             )
             Spacer(modifier = modifier.height(24.dp))
@@ -120,7 +116,6 @@ internal fun EditMenuInfoView(
                     onEventHandler(
                         ContentUiEvents.SaveMenuInfo(
                             MenuInfoData(
-                                id = menuInfoData.id,
                                 name = nameText.trim(),
                                 description = descriptionText.trim(),
                                 imageModel = imageModel,

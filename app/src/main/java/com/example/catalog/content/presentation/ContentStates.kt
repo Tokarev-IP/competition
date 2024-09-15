@@ -30,6 +30,10 @@ sealed interface ContentUiEvents {
     data object CreateMenu : ContentUiEvents
     data object CheckMenuId : ContentUiEvents
     data object DownloadDishAndSectionLists : ContentUiEvents
+    data object EditInfoImageList: ContentUiEvents
+    data object EditMenuInfo: ContentUiEvents
+    data object DownloadInfoImageList : ContentUiEvents
+    data object DownloadMenuInfo : ContentUiEvents
 
     class GenerateDescriptionOfDish(val imageBitmap: Bitmap, val dishName: String) : ContentUiEvents
     class SetUpdatedDishImage(val imageUri: Uri) : ContentUiEvents
@@ -53,7 +57,7 @@ interface ContentUiIntents {
     data object GoToCreateMenuScreen : ContentUiIntents
     data object GoToSectionListScreen : ContentUiIntents
     data object GoToCheckIdScreen : ContentUiIntents
-    data object GoToEditInfoScreen : ContentUiIntents
+    data object GoToEditInfoImageListScreen : ContentUiIntents
     data object GoToEditMenuInfoScreen : ContentUiIntents
     class GoToEditSectionScreen(val sectionData: SectionData) : ContentUiIntents
     class ShowSnackBarMsg(val msg: String) : ContentUiIntents
@@ -77,6 +81,12 @@ interface ScreenRoutes {
 
     @Serializable
     data object CheckIdScreen : ScreenRoutes
+
+    @Serializable
+    data object EditInfoImageListScreen : ScreenRoutes
+
+    @Serializable
+    data object EditMenuInfoScreen : ScreenRoutes
 }
 
 enum class LanguageList(

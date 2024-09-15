@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
+import com.example.catalog.content.presentation.common.GoBackNavigationButton
 import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 import com.example.catalog.content.presentation.views.EditDishView
 
@@ -48,8 +49,10 @@ internal fun EditDishScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     var snackBarMsg by remember { mutableStateOf<String?>(null) }
 
-    val pickPictureLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia()
+        ) { uri: Uri? ->
             uri?.let { notNullUri ->
                 contentViewModel.setUiEvent(ContentUiEvents.SetUpdatedDishImage(notNullUri))
             } ?: run { snackBarMsg = "No image was selected" }
@@ -83,13 +86,8 @@ internal fun EditDishScreen(
             TopAppBar(
                 title = { Text(text = "Edit dish") },
                 navigationIcon = {
-                    IconButton(
-                        onClick = { contentViewModel.setUiEvent(ContentUiEvents.GoBack) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Go back"
-                        )
+                    GoBackNavigationButton {
+                        contentViewModel.setUiEvent(ContentUiEvents.GoBack)
                     }
                 }
             )
@@ -113,10 +111,8 @@ internal fun EditDishScreen(
             },
             dishData = dishData,
             onChooseNewImage = {
-                pickPictureLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                    )
+                pickImageLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
             },
             innerPadding = innerPadding,

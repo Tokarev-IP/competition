@@ -29,6 +29,7 @@ import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
+import com.example.catalog.content.presentation.common.GoBackNavigationButton
 import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 import com.example.catalog.content.presentation.views.EditSectionView
 
@@ -66,13 +67,8 @@ internal fun EditSectionScreen(
             TopAppBar(
                 title = { Text(text = "Edit section") },
                 navigationIcon = {
-                    IconButton(
-                        onClick = { contentViewModel.setUiEvent(ContentUiEvents.GoBack) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Go back"
-                        )
+                    GoBackNavigationButton {
+                        contentViewModel.setUiEvent(ContentUiEvents.GoBack)
                     }
                 }
             )

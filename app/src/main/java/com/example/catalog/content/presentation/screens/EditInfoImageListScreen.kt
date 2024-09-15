@@ -2,16 +2,37 @@ package com.example.catalog.content.presentation.screens
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.carousel.CarouselState
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.catalog.content.presentation.ContentUiEvents
+import com.example.catalog.content.presentation.ContentUiIntents
+import com.example.catalog.content.presentation.ContentUiStates
+import com.example.catalog.content.presentation.common.ErrorStateView
+import com.example.catalog.content.presentation.common.GoBackNavigationButton
+import com.example.catalog.content.presentation.common.LoadingStateView
 import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 import com.example.catalog.content.presentation.views.EditInfoImageListView
 
@@ -20,29 +41,82 @@ import com.example.catalog.content.presentation.views.EditInfoImageListView
 internal fun EditInfoImageListScreen(
     modifier: Modifier = Modifier,
     contentViewModel: ContentViewModel,
-){
+) {
     val infoImageList by contentViewModel.getInfoImageDataFlow().collectAsState()
+    val uiIntent by contentViewModel.getUiIntentsFlow().collectAsState(initial = null)
+    val uiState by contentViewModel.getUiStatesFlow().collectAsState()
 
-    val pickPictureLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+    var snackBarMsg by remember { mutableStateOf<String?>(null) }
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia()
+        ) { uri: Uri? ->
             uri?.let { notNullUri ->
-                contentViewModel.setUiEvent(ContentUiEvents.SetUpdatedDishImage(notNullUri))
+                contentViewModel.setUiEvent(ContentUiEvents.SaveInfoImage(imageUri = notNullUri))
             } ?: run { snackBarMsg = "No image was selected" }
         }
 
-    val carouselState = CarouselState(
-        currentItem = 0,
-        currentItemOffsetFraction = 0f,
-        itemCount = { imageModel.size }
-    )
+    if (uiIntent is ContentUiIntents.ShowSnackBarMsg) {
+        snackBarMsg = (uiIntent as ContentUiIntents.ShowSnackBarMsg).msg
+        contentViewModel.clearUiIntents()
+    }
+
+    LaunchedEffect(key1 = snackBarMsg) {
+        snackBarMsg?.let { msg ->
+            snackBarHostState.showSnackbar(
+                message = msg,
+                actionLabel = "Result of action",
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
 
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Images") },
+                navigationIcon = {
+                    GoBackNavigationButton {
+                        contentViewModel.setUiEvent(ContentUiEvents.GoBack)
+                    }
+                }
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(snackBarHostState) { snackbarData: SnackbarData ->
+                Snackbar(modifier = modifier) {
+                    Text(text = snackbarData.visuals.message)
+                }
+            }
+        },
     ) { innerPadding ->
-        EditInfoImageListView(
-            innerPadding = innerPadding,
-            infoImageList = infoImageList,
-        )
+
+        when (uiState) {
+            is ContentUiStates.Loading -> {
+                LoadingStateView(innerPadding = innerPadding)
+            }
+
+            is ContentUiStates.Show -> {
+                EditInfoImageListView(
+                    innerPadding = innerPadding,
+                    infoImageList = infoImageList,
+                    onAddNewImage = {
+                        pickImageLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+                )
+            }
+
+            is ContentUiStates.Error -> {
+                ErrorStateView(innerPadding = innerPadding) {
+                    contentViewModel.setUiEvent(ContentUiEvents.DownloadInfoImageList)
+                }
+            }
+        }
     }
 
 }

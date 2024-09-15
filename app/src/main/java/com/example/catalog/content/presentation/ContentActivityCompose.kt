@@ -19,6 +19,8 @@ import com.example.catalog.content.presentation.screens.CheckIdScreen
 import com.example.catalog.content.presentation.screens.CreateMenuScreen
 import com.example.catalog.content.presentation.screens.EditDishScreen
 import com.example.catalog.content.presentation.screens.DishListScreen
+import com.example.catalog.content.presentation.screens.EditInfoImageListScreen
+import com.example.catalog.content.presentation.screens.EditMenuInfoScreen
 import com.example.catalog.content.presentation.screens.EditSectionScreen
 import com.example.catalog.content.presentation.screens.SectionListScreen
 import com.example.catalog.content.presentation.viewmodel.ContentViewModel
@@ -84,6 +86,16 @@ fun ContentActivityCompose(
             navController.navigate(ScreenRoutes.CheckIdScreen)
             contentViewModel.clearUiIntents()
         }
+
+        is ContentUiIntents.GoToEditMenuInfoScreen -> {
+            navController.navigate(ScreenRoutes.EditMenuInfoScreen)
+            contentViewModel.clearUiIntents()
+        }
+
+        is ContentUiIntents.GoToEditInfoImageListScreen -> {
+            navController.navigate(ScreenRoutes.EditInfoImageListScreen)
+            contentViewModel.clearUiIntents()
+        }
     }
 
     Box {
@@ -135,6 +147,14 @@ fun ContentActivityCompose(
 
             composable<ScreenRoutes.CheckIdScreen> {
                 CheckIdScreen(contentViewModel = contentViewModel)
+            }
+
+            composable<ScreenRoutes.EditInfoImageListScreen> {
+                EditInfoImageListScreen(contentViewModel = contentViewModel)
+            }
+
+            composable<ScreenRoutes.EditMenuInfoScreen> {
+                EditMenuInfoScreen(contentViewModel = contentViewModel)
             }
         }
     }
