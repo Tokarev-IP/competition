@@ -32,25 +32,11 @@ class EditInfoImageListActions @Inject constructor(
         compressQuality: Int,
     ) {
         try {
-            val bitmap = withContext(Dispatchers.IO) { //transforming image to bitmap
-                transformImageUseCaseInterface.getBitmapFromUri(uri)
-            }
-            val compressedBitmap = withContext(Dispatchers.IO) { //compressing bitmap
-                transformImageUseCaseInterface.compressBitmap(
-                    bitmap = bitmap,
-                    quality = compressQuality,
-                )
-            }
-            val byteArray = withContext(Dispatchers.IO) { //transforming bitmap to byte array
-                transformImageUseCaseInterface.getByteArrayFromBitmap(
-                    bitmap = compressedBitmap,
-                )
-            }
-            withContext(Dispatchers.IO) { //uploading byte array to firebase
-                uploadFileUseCaseInterface.uploadInfoImageUsingByteArray(
+            withContext(Dispatchers.IO) { //uploading image to firebase
+                uploadFileUseCaseInterface.uploadInfoImageUsingUri(
                     menuId = menuId,
                     imageId = imageId,
-                    byteArray = byteArray,
+                    uri = uri,
                 )
             }
             val uriOfImage = withContext(Dispatchers.IO) { //receiving uri of uploaded byte array
@@ -76,7 +62,7 @@ class EditInfoImageListActions @Inject constructor(
                     imageModel = uriOfImage
                 )
             )
-            onInfoImageListUpdated(infoImageList.toList())
+            onInfoImageListUpdated(infoImageMutableList.toList())
         } catch (e: Exception) {
             onErrorMessage(e.message.toString())
         }
@@ -90,13 +76,13 @@ class EditInfoImageListActions @Inject constructor(
         onErrorMessage: (String) -> Unit
     ) {
         try {
-            withContext(Dispatchers.IO) { //delete data from firestore
+            withContext(Dispatchers.IO) { //delete image file from firebase
                 deleteFileUseCaseInterface.deleteInfoImage(
                     menuId = menuId,
                     imageId = imageId,
                 )
             }
-            withContext(Dispatchers.IO) { //delete image from firebase
+            withContext(Dispatchers.IO) { //delete image data from firestore
                 deleteDataUseCaseInterface.deleteInfoImageData(
                     menuId = menuId,
                     imageId = imageId,
@@ -104,7 +90,7 @@ class EditInfoImageListActions @Inject constructor(
             }
             val infoImageMutableList = infoImageList.toMutableList()
             infoImageMutableList.removeIf { it.id == imageId }
-            onInfoImageListUpdated(infoImageList.toList())
+            onInfoImageListUpdated(infoImageMutableList.toList())
         } catch (e: Exception) {
             onErrorMessage(e.message.toString())
         }

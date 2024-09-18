@@ -2,7 +2,6 @@ package com.example.catalog.content.presentation.viewmodel.actions
 
 import com.example.catalog.content.domain.data.MenuInfoData
 import com.example.catalog.content.domain.extensions.toMenuInfoFirebase
-import com.example.catalog.content.domain.usecases.logic.TransformImageUseCaseInterface
 import com.example.catalog.content.domain.usecases.network.DownloadFileUseCaseInterface
 import com.example.catalog.content.domain.usecases.network.UploadDataUseCaseInterface
 import com.example.catalog.content.domain.usecases.network.UploadFileUseCaseInterface

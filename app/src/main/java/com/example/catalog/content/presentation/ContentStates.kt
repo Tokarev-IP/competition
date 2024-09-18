@@ -48,6 +48,7 @@ sealed interface ContentUiEvents {
     class SaveMenuAsPdfFile(val folderUri: Uri, val language: String? = null) : ContentUiEvents
     class SaveInfoImage(val imageUri: Uri) : ContentUiEvents
     class SaveMenuInfo(val menuInfoData: MenuInfoData): ContentUiEvents
+    class DeleteInfoImage(val imageId: String): ContentUiEvents
 }
 
 interface ContentUiIntents {

@@ -92,9 +92,9 @@ internal fun EditMenuInfoView(
                 value = descriptionText,
                 onValueChange = { text: String ->
                     if (text.length <= 60)
-                        nameText = text
+                        descriptionText = text
                 },
-                label = { Text(text = "Name") },
+                label = { Text(text = "Description") },
                 enabled = isEnabled,
                 shape = RoundedCornerShape(24.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

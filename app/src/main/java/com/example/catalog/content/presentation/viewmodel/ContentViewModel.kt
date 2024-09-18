@@ -108,7 +108,6 @@ class ContentViewModel @Inject constructor(
                 )
             }
 
-
             is ContentUiEvents.SetUpdatedDishImage -> {
                 setUpdatedDishImage(
                     imageUri = uiEvent.imageUri,
@@ -188,7 +187,10 @@ class ContentViewModel @Inject constructor(
                 )
             }
 
-            is ContentUiEvents.DeleteSection -> {}
+            is ContentUiEvents.DeleteSection -> {
+                //todo
+            }
+
             is ContentUiEvents.ShowDishListOfSection -> {
                 getDishListOfTheSpecificSection(
                     dishList = getDishList(),
@@ -239,6 +241,16 @@ class ContentViewModel @Inject constructor(
                 menuIdVM?.let { id ->
                     getMenuInfoData(id)
                     setUiIntent(ContentUiIntents.GoToEditMenuInfoScreen)
+                } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
+            }
+
+            is ContentUiEvents.DeleteInfoImage -> {
+                menuIdVM?.let { id ->
+                    deleteInfoImage(
+                        menuId = id,
+                        imageId = uiEvent.imageId,
+                        infoImageList = getInfoImageData()
+                    )
                 } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
             }
         }
@@ -549,9 +561,11 @@ class ContentViewModel @Inject constructor(
                 menuId = menuId,
                 onMenuInfoData = { data ->
                     setMenuInfoData(data)
+                    setUiState(ContentUiStates.Show)
                 },
                 onEmptyMenuInfoData = {
                     setMenuInfoData(MenuInfoData())
+                    setUiState(ContentUiStates.Show)
                 },
                 onErrorMessage = { message ->
                     setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
@@ -594,6 +608,30 @@ class ContentViewModel @Inject constructor(
                 onInfoImageListUpdated = { updatedList ->
                     setInfoImageData(updatedList)
                     setUiIntent(ContentUiIntents.ShowSnackBarMsg("The image was saved"))
+                    setUiState(ContentUiStates.Show)
+                },
+                onErrorMessage = { message ->
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
+                    setUiState(ContentUiStates.Show)
+                }
+            )
+        }
+    }
+
+    private fun deleteInfoImage(
+        menuId: String,
+        imageId: String,
+        infoImageList: List<InfoImageData>,
+    ) {
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            editInfoImageListActionsInterface.deleteInfoImageItem(
+                menuId = menuId,
+                imageId = imageId,
+                infoImageList = infoImageList,
+                onInfoImageListUpdated = { updatedList ->
+                    setInfoImageData(updatedList)
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg("The image was deleted"))
                     setUiState(ContentUiStates.Show)
                 },
                 onErrorMessage = { message ->

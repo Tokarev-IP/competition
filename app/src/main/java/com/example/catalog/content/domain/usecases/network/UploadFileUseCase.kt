@@ -30,14 +30,6 @@ class UploadFileUseCase @Inject constructor(
         }
     }
 
-    override suspend fun uploadMenuInfoImageUsingByteArray(
-        pathString: String,
-        menuId: String,
-        byteArray: ByteArray
-    ) {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun uploadDishImageUsingByteArray(
         pathString: String,
         menuId: String,
@@ -77,15 +69,6 @@ class UploadFileUseCase @Inject constructor(
             )
         }
     }
-
-    override suspend fun uploadInfoImageUsingByteArray(
-        pathString: String,
-        menuId: String,
-        imageId: String,
-        byteArray: ByteArray
-    ) {
-        TODO("Not yet implemented")
-    }
 }
 
 interface UploadFileUseCaseInterface {
@@ -93,12 +76,6 @@ interface UploadFileUseCaseInterface {
         pathString: String = "picture",
         menuId: String,
         uri: Uri,
-    )
-
-    suspend fun uploadMenuInfoImageUsingByteArray(
-        pathString: String = "picture",
-        menuId: String,
-        byteArray: ByteArray,
     )
 
     suspend fun uploadDishImageUsingByteArray(
@@ -113,12 +90,5 @@ interface UploadFileUseCaseInterface {
         menuId: String,
         imageId: String,
         uri: Uri,
-    )
-
-    suspend fun uploadInfoImageUsingByteArray(
-        pathString: String = "info",
-        menuId: String,
-        imageId: String,
-        byteArray: ByteArray,
     )
 }
