@@ -47,3 +47,14 @@ class PdfDishData(
     val weight: Double = 0.0,
     val bitmap: Bitmap? = null,
 )
+
+class MenuViewData(
+    val menuInfoData: MenuInfoData = MenuInfoData(),
+    val infoImageList: List<InfoImageData> = emptyList(),
+    val dishListAndSectionViewDataList: List<DishListAndSectionViewData> = emptyList(),
+)
+
+class DishListAndSectionViewData(
+    val dishDataList: List<DishData> = emptyList(),
+    val sectionData: SectionData = SectionData(),
+)

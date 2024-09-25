@@ -224,6 +224,7 @@ internal fun EditDishView(
                                 weight = dishWeightText.toDouble(),
                                 imageModel = imageModel,
                                 updatedImageModel = updatedImageModel,
+                                sectionId = dishData.sectionId,
                             )
                         )
                     )

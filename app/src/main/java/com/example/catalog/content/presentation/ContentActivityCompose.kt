@@ -1,5 +1,6 @@
 package com.example.catalog.content.presentation
 
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -22,6 +23,7 @@ import com.example.catalog.content.presentation.screens.DishListScreen
 import com.example.catalog.content.presentation.screens.EditInfoImageListScreen
 import com.example.catalog.content.presentation.screens.EditMenuInfoScreen
 import com.example.catalog.content.presentation.screens.EditSectionScreen
+import com.example.catalog.content.presentation.screens.MenuScreen
 import com.example.catalog.content.presentation.screens.SectionListScreen
 import com.example.catalog.content.presentation.viewmodel.ContentViewModel
 
@@ -41,6 +43,7 @@ fun ContentActivityCompose(
 
         is ContentUiIntents.GoToDishListScreen -> {
             val sectionData = (uiIntent as ContentUiIntents.GoToDishListScreen).sectionData
+            Log.d("DAVAI", "SectionData: $sectionData")
             navController.navigate(
                 ScreenRoutes.DishListScreen(
                     id = sectionData.id,
@@ -72,6 +75,7 @@ fun ContentActivityCompose(
 
         is ContentUiIntents.GoToEditSectionScreen -> {
             val sectionData = (uiIntent as ContentUiIntents.GoToEditSectionScreen).sectionData
+            Log.d("DAVAI", "SectionData: $sectionData")
             navController.navigate(
                 ScreenRoutes.EditSectionScreen(
                     id = sectionData.id,
@@ -94,6 +98,11 @@ fun ContentActivityCompose(
 
         is ContentUiIntents.GoToEditInfoImageListScreen -> {
             navController.navigate(ScreenRoutes.EditInfoImageListScreen)
+            contentViewModel.clearUiIntents()
+        }
+
+        is ContentUiIntents.GoToMenuScreen -> {
+            navController.navigate(ScreenRoutes.MenuScreen)
             contentViewModel.clearUiIntents()
         }
     }
@@ -122,6 +131,7 @@ fun ContentActivityCompose(
                     name = data.name,
                     position = data.position,
                 )
+                Log.d("DAVAI", "SectionData: $sectionData")
                 DishListScreen(
                     contentViewModel = contentViewModel,
                     sectionData = sectionData,
@@ -155,6 +165,10 @@ fun ContentActivityCompose(
 
             composable<ScreenRoutes.EditMenuInfoScreen> {
                 EditMenuInfoScreen(contentViewModel = contentViewModel)
+            }
+
+            composable<ScreenRoutes.MenuScreen>{
+                MenuScreen(contentViewModel = contentViewModel)
             }
         }
     }

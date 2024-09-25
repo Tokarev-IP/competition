@@ -143,5 +143,4 @@ internal fun EditInfoImageListScreen(
                     onConfirm = { isOpenedImageDialog = false })
             }
         }
-
 }

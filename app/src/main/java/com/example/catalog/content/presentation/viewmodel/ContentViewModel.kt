@@ -253,6 +253,10 @@ class ContentViewModel @Inject constructor(
                     )
                 } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
             }
+            
+            is ContentUiEvents.ShowMenu -> {
+
+            }
         }
     }
 
