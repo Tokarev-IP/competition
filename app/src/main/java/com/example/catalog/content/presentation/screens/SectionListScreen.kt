@@ -93,6 +93,13 @@ internal fun SectionListScreen(
                         onDismissRequest = { isMenuExpanded = false }
                     ) {
                         DropdownMenuItem(
+                            text = { Text("View menu") },
+                            onClick = {
+                                contentViewModel.setUiEvent(ContentUiEvents.ShowMenu)
+                            },
+                            enabled = (uiState is ContentUiStates.Show),
+                        )
+                        DropdownMenuItem(
                             text = { Text("Edit info images") },
                             onClick = {
                                 contentViewModel.setUiEvent(ContentUiEvents.EditInfoImageList)

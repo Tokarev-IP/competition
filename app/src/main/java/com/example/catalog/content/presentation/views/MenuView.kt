@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.domain.data.DishListAndSectionViewData
@@ -47,7 +48,10 @@ internal fun MenuView(
         item {
             MenuInfoView(menuInfoData = menuInfoData)
             Spacer(modifier = modifier.height(24.dp))
-            MenuImagesView(infoImageList = infoImageList)
+
+            if (infoImageList.isNotEmpty())
+                MenuImagesView(infoImageList = infoImageList)
+
             Spacer(modifier = modifier.height(24.dp))
         }
 
@@ -93,7 +97,6 @@ private fun MenuInfoView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MenuImagesView(
-    modifier: Modifier = Modifier,
     infoImageList: List<InfoImageData>,
 ) {
     val carouselState = CarouselState(
@@ -118,12 +121,16 @@ private fun SectionAndDishListView(
     modifier: Modifier = Modifier,
     sectionData: SectionData,
     dishList: List<DishData>,
-){
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = sectionData.name)
+        Spacer(modifier = modifier.height(24.dp))
+        Text(
+            text = sectionData.name,
+            fontSize = 20.sp,
+        )
         Spacer(modifier = modifier.height(24.dp))
         for (dish in dishList) {
             DishItem(dishData = dish)

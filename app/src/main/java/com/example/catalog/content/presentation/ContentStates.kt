@@ -35,6 +35,7 @@ sealed interface ContentUiEvents {
     data object DownloadInfoImageList : ContentUiEvents
     data object DownloadMenuInfo : ContentUiEvents
     data object ShowMenu: ContentUiEvents
+    data object DownloadMenu: ContentUiEvents
 
     class GenerateDescriptionOfDish(val imageBitmap: Bitmap, val dishName: String) : ContentUiEvents
     class SetUpdatedDishImage(val imageUri: Uri) : ContentUiEvents
@@ -86,6 +87,7 @@ interface ScreenRoutes {
     data object CheckIdScreen : ScreenRoutes
 
     @Serializable
+
     data object EditInfoImageListScreen : ScreenRoutes
 
     @Serializable

@@ -23,11 +23,11 @@ class EditDishItemActions @Inject constructor(
         onErrorMessage: (String) -> Unit
     ) {
         try {
-            val bitmap = withContext(Dispatchers.IO) {
+            val bitmap = withContext(Dispatchers.Default) {
                 transformBitmapImageUseCaseInterface.segmentImageFromBitmap(imageBitmap)
             }
 
-            val croppedBitmap = withContext(Dispatchers.IO) {
+            val croppedBitmap = withContext(Dispatchers.Default) {
                 transformBitmapImageUseCaseInterface.cropBitmapToForeground(bitmap)
             }
             onUpdatedDish(dishData.copy(updatedImageModel = croppedBitmap))
@@ -63,10 +63,10 @@ class EditDishItemActions @Inject constructor(
         quality: Int,
     ) {
         try {
-            val bitmap = withContext(Dispatchers.IO) {
+            val bitmap = withContext(Dispatchers.Default) {
                 transformImageUseCaseInterface.getBitmapFromUri(imageUri)
             }
-            val compressedBitmap = withContext(Dispatchers.IO) {
+            val compressedBitmap = withContext(Dispatchers.Default) {
                 transformImageUseCaseInterface.compressBitmap(
                     bitmap = bitmap,
                     quality = quality,

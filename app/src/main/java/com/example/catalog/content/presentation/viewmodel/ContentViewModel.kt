@@ -255,7 +255,16 @@ class ContentViewModel @Inject constructor(
             }
             
             is ContentUiEvents.ShowMenu -> {
+                menuIdVM?.let { id ->
+                    getViewMenuData(id)
+                    setUiIntent(ContentUiIntents.GoToMenuScreen)
+                } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
+            }
 
+            is ContentUiEvents.DownloadMenu -> {
+                menuIdVM?.let { id ->
+                    getViewMenuData(id)
+                } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
             }
         }
     }
@@ -641,6 +650,25 @@ class ContentViewModel @Inject constructor(
                 onErrorMessage = { message ->
                     setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
                     setUiState(ContentUiStates.Show)
+                }
+            )
+        }
+    }
+
+    private fun getViewMenuData(
+        menuId: String
+    ){
+        setUiState(ContentUiStates.Loading)
+        viewModelScope.launch {
+            getDataActionsInterface.getViewMenuData(
+                menuId = menuId,
+                onViewMenuData = { data ->
+                    setMenuViewData(data)
+                    setUiState(ContentUiStates.Show)
+                },
+                onErrorMessage = {
+                    setUiIntent(ContentUiIntents.ShowSnackBarMsg(it))
+                    setUiState(ContentUiStates.Error)
                 }
             )
         }

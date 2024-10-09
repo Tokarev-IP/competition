@@ -72,7 +72,7 @@ internal fun EditSectionView(
             onAccept = {
                 onEventHandler(
                     ContentUiEvents.SaveSectionItem(
-                        sectionData.copy(name = sectionName)
+                        sectionData.copy(name = sectionName.trim())
                     )
                 )
             },

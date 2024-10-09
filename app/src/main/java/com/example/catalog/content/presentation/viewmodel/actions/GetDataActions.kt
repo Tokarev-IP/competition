@@ -3,15 +3,18 @@ package com.example.catalog.content.presentation.viewmodel.actions
 import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.domain.data.InfoImageData
 import com.example.catalog.content.domain.data.MenuInfoData
+import com.example.catalog.content.domain.data.MenuViewData
 import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.domain.extensions.toMenuInfoData
+import com.example.catalog.content.domain.functions.SortDataInterface
 import com.example.catalog.content.domain.usecases.network.DownloadDataUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class GetDataActions @Inject constructor(
-    private val downloadDataUseCaseInterface: DownloadDataUseCaseInterface
+    private val downloadDataUseCaseInterface: DownloadDataUseCaseInterface,
+    private val sortDataInterface: SortDataInterface,
 ) : GetDataActionsInterface {
 
     override suspend fun getCurrentMenuId(
@@ -124,6 +127,44 @@ class GetDataActions @Inject constructor(
         }
     }
 
+    override suspend fun getViewMenuData(
+        menuId: String,
+        onViewMenuData: (MenuViewData) -> Unit,
+        onErrorMessage: (String) -> Unit
+    ) {
+        try {
+            val dishDataList = withContext(Dispatchers.IO) {
+                downloadDataUseCaseInterface.downloadMenuDishListData(menuId = menuId)
+            }
+            val sectionDataList = withContext(Dispatchers.IO) {
+                downloadDataUseCaseInterface.downloadMenuSectionListData(menuId = menuId)
+            }
+            val menuInfoData = withContext(Dispatchers.IO) {
+                val response = downloadDataUseCaseInterface.downloadMenuInfoData(menuId = menuId)
+                response?.toMenuInfoData() ?: MenuInfoData()
+            }
+            val infoImageDataList = withContext(Dispatchers.IO){
+                downloadDataUseCaseInterface.downloadInfoImageListData(menuId = menuId)
+            }
+
+            val dishAndSectionListData = withContext(Dispatchers.Default){
+                sortDataInterface.sortDishData(
+                    dishDataList = dishDataList,
+                    sectionDataList = sectionDataList,
+                )
+            }
+            onViewMenuData(
+                MenuViewData(
+                    menuInfoData = menuInfoData,
+                    infoImageList = infoImageDataList,
+                    dishListAndSectionViewDataList = dishAndSectionListData,
+                )
+            )
+        } catch (e: Exception){
+            onErrorMessage(e.message.toString())
+        }
+    }
+
 }
 
 interface GetDataActionsInterface {
@@ -168,6 +209,12 @@ interface GetDataActionsInterface {
     suspend fun getInfoImageDataList(
         menuId: String,
         onInfoImageList: (List<InfoImageData>) -> Unit,
+        onErrorMessage: (String) -> Unit,
+    )
+
+    suspend fun getViewMenuData(
+        menuId: String,
+        onViewMenuData: (MenuViewData) -> Unit,
         onErrorMessage: (String) -> Unit,
     )
 }

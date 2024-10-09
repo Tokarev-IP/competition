@@ -1,4 +1,4 @@
-package com.example.catalog.content.domain.usecases.logic
+package com.example.catalog.content.domain.functions
 
 import android.content.Context
 import android.graphics.BitmapFactory

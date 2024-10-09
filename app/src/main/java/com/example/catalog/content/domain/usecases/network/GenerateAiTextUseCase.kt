@@ -25,7 +25,6 @@ class GenerateAiTextUseCase @Inject constructor(
                 geminiAiInterface.generateTextUsingImage(
                     text = text.toString(),
                     bitmapImage = imageBitmap,
-                    texxt = string,
                 )
 
             response.text ?: throw Exception("No response text received")
@@ -42,7 +41,6 @@ class GenerateAiTextUseCase @Inject constructor(
 
             val response = geminiAiInterface.generateText(
                 text = finalText,
-                texxt = string,
             )
             response.text ?: throw Exception("No response text received")
         }
@@ -60,14 +58,13 @@ class GenerateAiTextUseCase @Inject constructor(
                 geminiAiInterface.generateTextUsingImage(
                     text = finalText,
                     bitmapImage = imageBitmap,
-                    texxt = string,
                 )
 
             response.text ?: throw Exception("No response text received")
         }
     }
 
-    private val string = "AIzaSyAGbHdcGjdRGvxml2uMHmXhv6AEEAZOE-Y"
+//    private val string = "AIzaSyAGbHdcGjdRGvxml2uMHmXhv6AEEAZOE-Y"
 }
 
 interface GenerateAiTextUseCaseInterface {

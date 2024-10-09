@@ -2,10 +2,12 @@ package com.example.catalog.content.domain.di
 
 import com.example.catalog.content.domain.functions.CreateMenuPdfFileInterface
 import com.example.catalog.content.domain.functions.TransformImageInterface
-import com.example.catalog.content.domain.usecases.logic.CreateDocFile
-import com.example.catalog.content.domain.usecases.logic.CreateDocFileInterface
-import com.example.catalog.content.domain.usecases.logic.DishListFunctions
-import com.example.catalog.content.domain.usecases.logic.DishListFunctionsInterface
+import com.example.catalog.content.domain.functions.CreateDocFile
+import com.example.catalog.content.domain.functions.CreateDocFileInterface
+import com.example.catalog.content.domain.functions.DishListFunctions
+import com.example.catalog.content.domain.functions.DishListFunctionsInterface
+import com.example.catalog.content.domain.functions.SortData
+import com.example.catalog.content.domain.functions.SortDataInterface
 import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCase
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCase
 import dagger.Binds
@@ -33,4 +35,8 @@ interface FunctionsModule {
     @Singleton
     @Binds
     fun bindDishListFunctionInterface(impl: DishListFunctions): DishListFunctionsInterface
+
+    @Singleton
+    @Binds
+    fun bindSortDataInterface(impl: SortData): SortDataInterface
 }

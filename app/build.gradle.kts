@@ -85,9 +85,12 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     //Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
+    implementation ("com.google.firebase:firebase-core:21.1.1")
+    implementation ("com.google.firebase:firebase-ml-model-interpreter:22.0.4")
+
 
     //MLKit
     implementation ("com.google.mlkit:image-labeling:17.0.8")
@@ -97,7 +100,6 @@ dependencies {
 
     //Gemini
     implementation("com.google.firebase:firebase-vertexai:16.0.0-beta01")
-    implementation("com.google.ai.client.generativeai:generativeai:0.8.0")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.6.0")

@@ -1,4 +1,4 @@
-package com.example.catalog.content.domain.usecases.logic
+package com.example.catalog.content.domain.functions
 
 import com.example.catalog.content.domain.data.DishData
 import javax.inject.Inject
