@@ -5,6 +5,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     alias(libs.plugins.google.gms.google.services)
     id("org.jetbrains.kotlin.plugin.serialization")
+    alias(libs.plugins.compose.compiler)
 }
 
 kapt {
@@ -13,12 +14,12 @@ kapt {
 
 android {
     namespace = "com.example.catalog"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.catalog"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -79,15 +80,15 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     //Hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    annotationProcessor("com.google.dagger:hilt-compiler:2.51.1")
-    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    implementation("com.google.dagger:hilt-android:2.52")
+    annotationProcessor("com.google.dagger:hilt-compiler:2.52")
+    kapt("com.google.dagger:hilt-compiler:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     //Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-auth")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation ("com.google.firebase:firebase-core:21.1.1")
     implementation ("com.google.firebase:firebase-ml-model-interpreter:22.0.4")
 
@@ -95,14 +96,14 @@ dependencies {
     //MLKit
     implementation ("com.google.mlkit:image-labeling:17.0.8")
     implementation("com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1")
-    implementation("com.google.mlkit:language-id:17.0.5")
+    implementation("com.google.mlkit:language-id:17.0.6")
     implementation("com.google.mlkit:image-labeling:17.0.8")
 
     //Gemini
-    implementation("com.google.firebase:firebase-vertexai:16.0.0-beta01")
+    implementation("com.google.firebase:firebase-vertexai:16.0.1")
 
     //Coil
-    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
 
     //DOC
     implementation("org.apache.poi:poi:5.2.3")
