@@ -1,37 +1,39 @@
 [versions]
-agp = "8.4.0"
-coilCompose = "2.6.0"
+agp = "8.7.2"
+coilCompose = "2.7.0"
 composeColorPicker = "<latest-version>"
-firebaseBom = "33.0.0"
-googleHiltAndroid = "2.44"
-googleServices = "4.4.1"
-hiltAndroid = "2.50"
+firebaseBom = "33.5.1"
+googleHiltAndroid = "2.52"
+googleServices = "4.4.2"
+hiltAndroid = "2.52"
 hiltAndroidCompiler = "2.44"
-hiltAndroidVersion = "2.50.1"
-hiltCompiler = "2.50"
+hiltAndroidVersion = "2.52"
+hiltCompiler = "2.52"
 hiltNavigationFragment = "1.2.0"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+dagger-hilt = "2.51.1"
+kotlin = "2.0.21"
+coreKtx = "1.15.0"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
-lifecycleRuntimeKtx = "2.8.0"
-activityCompose = "1.9.2"
-composeBom = "2024.09.01"
-googleGmsGoogleServices = "4.4.1"
-firebaseAuth = "23.0.0"
-lifecycleViewmodelCompose = "2.8.0"
-lifecycleViewmodelComposeVersion = "2.7.0"
-material = "1.6.7"
-navigationCompose = "2.7.7"
-firebaseFirestoreKtx = "25.0.0"
-firebaseFirestore = "25.0.0"
-firebaseStorage = "21.0.0"
-firebaseVertexai = "16.0.0-beta01"
-composePreviewRenderer = "0.0.1-alpha01"
-navigationFragment = "2.7.7"
-navigationUi = "2.7.7"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.9.3"
+composeBom = "2024.10.01"
+googleGmsGoogleServices = "4.4.2"
+firebaseAuth = "23.1.0"
+lifecycleViewmodelCompose = "2.8.7"
+lifecycleViewmodelComposeVersion = "2.8.7"
+material = "1.7.5"
+navigationCompose = "2.8.3"
+firebaseFirestoreKtx = "25.1.1"
+firebaseFirestore = "25.1.1"
+firebaseStorage = "21.0.1"
+firebaseVertexai = "16.0.1"
+composePreviewRenderer = "0.0.1-alpha07"
+navigationFragment = "2.8.3"
+navigationUi = "2.8.3"
 tasksVisionImageGenerator = "1.1.1"
+kotlin-serialization = "2.0.21"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,7 +43,7 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 androidx-lifecycle-viewmodel-compose-v270 = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelComposeVersion" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "navigationFragment" }
-androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version = "2.8.0" }
+androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationUi" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 compose-color-picker = { module = "com.godaddy.android.colorpicker:compose-color-picker", version.ref = "composeColorPicker" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
@@ -55,7 +57,7 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.8.2" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
@@ -66,7 +68,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.8.0" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
@@ -78,4 +80,7 @@ tasks-vision-image-generator = { module = "com.google.mediapipe:tasks-vision-ima
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt"}
+jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-serialization"}
 
