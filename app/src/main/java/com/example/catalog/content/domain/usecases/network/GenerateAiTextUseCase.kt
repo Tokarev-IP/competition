@@ -1,7 +1,7 @@
 package com.example.catalog.content.domain.usecases.network
 
 import android.graphics.Bitmap
-import com.example.catalog.content.data.interfaces.GeminiAiInterface
+import com.example.catalog.content.data.repositories.GeminiAiInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
