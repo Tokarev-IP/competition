@@ -64,12 +64,16 @@ abstract class ContentBaseViewModel<uiState : ContentUiStates, uiIntents : Conte
     private val menuViewData = MutableStateFlow<MenuViewData>(MenuViewData())
     private val menuViewDataFlow = menuViewData.asStateFlow()
 
+    private val dishListForSpecificSection = MutableStateFlow<List<DishData>>(emptyList())
+    private val dishListForSpecificSectionFlow = dishListForSpecificSection.asStateFlow()
+
     protected fun setDishItemData(data: DishData) { dishItemData.value = data }
     protected fun setDishList(list: List<DishData>) { dishList.value = list }
     protected fun setSectionList(list: List<SectionData>) { sectionList.value = list }
     protected fun setMenuInfoData(data: MenuInfoData) { menuInfoData.value = data }
     protected fun setInfoImageData(list: List<InfoImageData>) { infoImageData.value = list }
     protected fun setMenuViewData(data: MenuViewData) { menuViewData.value = data }
+    protected fun setDishListForSpecificSection(list: List<DishData>) { dishListForSpecificSection.value = list }
 
     protected fun getDishItemData() = dishItemData.value
     protected fun getDishList() = dishList.value
@@ -77,6 +81,7 @@ abstract class ContentBaseViewModel<uiState : ContentUiStates, uiIntents : Conte
     protected fun getMenuInfoData() = menuInfoData.value
     protected fun getInfoImageData() = infoImageData.value
     protected fun getMenuViewData() = menuViewData.value
+    protected fun getDishListForSpecificSection() = dishListForSpecificSection.value
 
     fun getDishItemDataFlow() = dishItemDataFlow
     fun getDishListFlow() = dishListFlow
@@ -84,4 +89,6 @@ abstract class ContentBaseViewModel<uiState : ContentUiStates, uiIntents : Conte
     fun getMenuInfoDataFlow() = menuInfoDataFlow
     fun getInfoImageDataFlow() = infoImageDataFlow
     fun getMenuViewDataFlow() = menuViewDataFlow
+    fun getDishListForSpecificSectionFlow() = dishListForSpecificSectionFlow
+
 }
