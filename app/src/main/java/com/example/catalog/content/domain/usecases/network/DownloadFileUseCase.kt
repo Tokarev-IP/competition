@@ -2,7 +2,6 @@ package com.example.catalog.content.domain.usecases.network
 
 import android.net.Uri
 import com.example.catalog.content.data.repositories.FirebaseStorageDownloadRepository
-import com.google.firebase.storage.StorageMetadata
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -57,10 +56,10 @@ class DownloadFileUseCase @Inject constructor(
         dishId: String
     ): Boolean {
         return suspendCancellableCoroutine { continuation ->
-            firebaseStorageDownloadRepository.getMetadataOfFile(
+            firebaseStorageDownloadRepository.getNameOfFile(
                 pathString = "$menuId/$pathString/$dishId",
-                onSuccess = { metadata: StorageMetadata ->
-                    metadata.name?.let {
+                onSuccess = { name: String? ->
+                    name?.let {
                         continuation.resume(false)
                     } ?: continuation.resume(true)
                 },

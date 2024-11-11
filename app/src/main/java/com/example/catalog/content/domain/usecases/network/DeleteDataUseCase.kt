@@ -1,6 +1,6 @@
 package com.example.catalog.content.domain.usecases.network
 
-import com.example.catalog.content.data.interfaces.FirestoreDeleteInterface
+import com.example.catalog.content.data.repositories.FirestoreDeleteInterface
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume

@@ -1,6 +1,6 @@
 package com.example.catalog.content.domain.usecases.network
 
-import com.example.catalog.content.data.interfaces.FirestoreUploadInterface
+import com.example.catalog.content.data.repositories.FirestoreUploadInterface
 import com.example.catalog.content.domain.data.DishDataFirebase
 import com.example.catalog.content.domain.data.InfoImageFirebase
 import com.example.catalog.content.domain.data.MenuIdFirebase
