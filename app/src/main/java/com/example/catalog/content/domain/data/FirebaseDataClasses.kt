@@ -7,14 +7,14 @@ import kotlinx.serialization.Serializable
 data class MenuIdFirebase @JvmOverloads constructor(
     @get:PropertyName("id")
     @set:PropertyName("id")
-    var id: String = ""
-)
+    override var id: String = ""
+) : FirebaseDataClasses
 
 @Serializable
 data class DishDataFirebase @JvmOverloads constructor(
     @get:PropertyName("id")
     @set:PropertyName("id")
-    var id: String = "",
+    override var id: String = "",
 
     @get:PropertyName("name")
     @set:PropertyName("name")
@@ -43,10 +43,14 @@ data class DishDataFirebase @JvmOverloads constructor(
     @get:PropertyName("section_id")
     @set:PropertyName("section_id")
     var sectionId: String = "",
-)
+) : FirebaseDataClasses
 
 @Serializable
 data class MenuInfoFirebase @JvmOverloads constructor(
+    @get:PropertyName("id")
+    @set:PropertyName("id")
+    override var id: String = "",
+
     @get:PropertyName("name")
     @set:PropertyName("name")
     var name: String = "",
@@ -58,13 +62,13 @@ data class MenuInfoFirebase @JvmOverloads constructor(
     @get:PropertyName("image")
     @set:PropertyName("image")
     var image: String? = null,
-)
+) : FirebaseDataClasses
 
 @Serializable
 data class SectionDataFirebase @JvmOverloads constructor(
     @get:PropertyName("id")
     @set:PropertyName("id")
-    var id: String = "",
+    override var id: String = "",
 
     @get:PropertyName("name")
     @set:PropertyName("name")
@@ -73,15 +77,19 @@ data class SectionDataFirebase @JvmOverloads constructor(
     @get:PropertyName("position")
     @set:PropertyName("position")
     var position: Int = 0,
-)
+) : FirebaseDataClasses
 
 @Serializable
 data class InfoImageFirebase @JvmOverloads constructor(
     @get:PropertyName("id")
     @set:PropertyName("id")
-    var id: String = "",
+    override var id: String = "",
 
     @get:PropertyName("image")
     @set:PropertyName("image")
     var image: String = "",
-)
+) : FirebaseDataClasses
+
+interface FirebaseDataClasses {
+    var id: String
+}
