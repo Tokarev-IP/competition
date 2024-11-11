@@ -21,6 +21,7 @@ data class SectionData(
 )
 
 data class MenuInfoData(
+    val id: String = "",
     val name: String = "",
     val description: String = "",
     val imageModel: Uri? = null,
@@ -46,6 +47,11 @@ class PdfDishData(
     val price: Double = 0.0,
     val weight: Double = 0.0,
     val bitmap: Bitmap? = null,
+)
+
+class PdfMenuData(
+    val sectionData: SectionData = SectionData(),
+    val pdfDishData: List<PdfDishData> = emptyList(),
 )
 
 class MenuViewData(
