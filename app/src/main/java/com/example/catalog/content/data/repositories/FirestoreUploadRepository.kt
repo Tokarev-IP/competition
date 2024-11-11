@@ -1,8 +1,7 @@
 package com.example.catalog.content.data.repositories
 
-import com.example.catalog.content.data.interfaces.FirestoreUploadInterface
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import javax.inject.Inject
 
@@ -45,4 +44,25 @@ class FirestoreUploadRepository @Inject constructor() : FirestoreUploadInterface
                 onFailure(e)
             }
     }
+}
+
+interface FirestoreUploadInterface {
+
+    fun <T : Any> uploadOneCollectionData(
+        data: T,
+        collection: String,
+        documentId: String,
+        onSuccess: () -> Unit,
+        onFailure: (e: Exception) -> Unit,
+    )
+
+    fun <T : Any> uploadTwoCollectionData(
+        data: T,
+        collection1: String,
+        collection2: String,
+        documentPath: String,
+        documentId: String,
+        onSuccess: () -> Unit,
+        onFailure: (e: Exception) -> Unit,
+    )
 }

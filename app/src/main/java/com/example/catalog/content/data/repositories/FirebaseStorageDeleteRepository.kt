@@ -1,6 +1,5 @@
 package com.example.catalog.content.data.repositories
 
-import com.example.catalog.content.data.interfaces.FirebaseStorageDeleteInterface
 import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
 import javax.inject.Inject
@@ -22,5 +21,12 @@ class FirebaseStorageDeleteRepository @Inject constructor(): FirebaseStorageDele
                 onFailure(e)
             }
     }
+}
 
+interface FirebaseStorageDeleteInterface {
+    fun deleteFile(
+        pathString: String,
+        onSuccess: () -> Unit,
+        onFailure: (e: Exception) -> Unit,
+    )
 }

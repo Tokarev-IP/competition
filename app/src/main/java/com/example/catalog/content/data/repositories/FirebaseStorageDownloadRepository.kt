@@ -1,7 +1,6 @@
 package com.example.catalog.content.data.repositories
 
 import android.net.Uri
-import com.example.catalog.content.data.interfaces.FirebaseStorageDownloadInterface
 import com.google.firebase.Firebase
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.storage
@@ -39,17 +38,39 @@ class FirebaseStorageDownloadRepository @Inject constructor(): FirebaseStorageDo
             }
     }
 
-    override fun getMetadataOfFile(
+    override fun getNameOfFile(
         pathString: String,
-        onSuccess: (metadata: StorageMetadata) -> Unit,
+        onSuccess: (name: String?) -> Unit,
         onFailure: (e: Exception) -> Unit
     ) {
         storageRef.child(pathString).metadata
             .addOnSuccessListener { metadata: StorageMetadata ->
-                onSuccess(metadata)
+                onSuccess(metadata.name)
             }
             .addOnFailureListener { e: Exception ->
                 onFailure(e)
             }
     }
+}
+
+interface FirebaseStorageDownloadInterface {
+
+    fun downloadUriOfFile(
+        pathString: String,
+        onSuccess: (uri: Uri?) -> Unit,
+        onFailure: (e: Exception) -> Unit,
+    )
+
+    fun downloadImageFile(
+        pathString: String,
+        onSuccess: (byteArray: ByteArray) -> Unit,
+        onFailure: (e: Exception) -> Unit,
+    )
+
+    fun getNameOfFile(
+        pathString: String,
+        onSuccess: (name: String?) -> Unit,
+        onFailure: (e: Exception) -> Unit,
+    )
+
 }
