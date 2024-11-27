@@ -43,12 +43,14 @@ fun SectionData.toSectionDataFirebase(): SectionDataFirebase = SectionDataFireba
 )
 
 fun MenuInfoData.toMenuInfoFirebase(): MenuInfoFirebase = MenuInfoFirebase(
+    id = this.id,
     name = this.name,
     description = this.description,
     image = if (this.imageModel != null) this.imageModel.toString() else null,
 )
 
 fun MenuInfoFirebase.toMenuInfoData(): MenuInfoData = MenuInfoData(
+    id = this.id,
     name = this.name,
     description = this.description,
     imageModel = if (this.image != null) Uri.parse(this.image) else null,

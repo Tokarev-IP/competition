@@ -53,7 +53,7 @@ internal fun DishListScreen(
     sectionData: SectionData,
 ) {
     val uiState by contentViewModel.getUiStatesFlow().collectAsState()
-    val dishList by contentViewModel.getDishListFlow().collectAsState()
+    val dishList by contentViewModel.getDishListForSpecificSectionFlow().collectAsState()
     val uiIntent by contentViewModel.getUiIntentsFlow().collectAsState(initial = null)
 
     var isOpenedLanguageDialog by remember { mutableStateOf(false) }
