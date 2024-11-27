@@ -11,14 +11,14 @@ import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
 import com.example.catalog.content.presentation.base.ContentBaseViewModel
-import com.example.catalog.content.presentation.viewmodel.actions.EditDishItemActionsInterface
-import com.example.catalog.content.presentation.viewmodel.actions.EditDishListActionsInterface
-import com.example.catalog.content.presentation.viewmodel.actions.EditInfoImageListActionsInterface
-import com.example.catalog.content.presentation.viewmodel.actions.EditMenuInfoActionsInterface
-import com.example.catalog.content.presentation.viewmodel.actions.EditSectionListActionsInterface
-import com.example.catalog.content.presentation.viewmodel.actions.GetDataActionsInterface
-import com.example.catalog.content.presentation.viewmodel.actions.MenuActionsInterface
-import com.example.catalog.content.presentation.viewmodel.actions.PdfFileActionsInterface
+import com.example.catalog.content.domain.usecases.EditDishItemUseCasesInterface
+import com.example.catalog.content.domain.usecases.EditDishListItemUseCasesInterface
+import com.example.catalog.content.domain.usecases.EditInfoImageListUseCasesInterface
+import com.example.catalog.content.domain.usecases.EditMenuInfoUseCasesInterface
+import com.example.catalog.content.domain.usecases.EditSectionListUseCasesInterface
+import com.example.catalog.content.domain.usecases.GetDataUseCasesInterface
+import com.example.catalog.content.domain.usecases.CreateMenuUseCasesInterface
+import com.example.catalog.content.domain.usecases.PdfFileUseCasesInterface
 import com.example.catalog.login.domain.interfaces.PhoneAuthUseCaseInterface
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,14 +29,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ContentViewModel @Inject constructor(
     private val phoneAuthUseCaseInterface: PhoneAuthUseCaseInterface,
-    private val editDishListActionsInterface: EditDishListActionsInterface,
-    private val editDishItemActionsInterface: EditDishItemActionsInterface,
-    private val getDataActionsInterface: GetDataActionsInterface,
-    private val pdfFileActionsInterface: PdfFileActionsInterface,
-    private val menuActionsInterface: MenuActionsInterface,
-    private val editSectionListActionsInterface: EditSectionListActionsInterface,
-    private val editInfoImageListActionsInterface: EditInfoImageListActionsInterface,
-    private val editMenuInfoActionsInterface: EditMenuInfoActionsInterface,
+    private val editDishListItemUseCasesInterface: EditDishListItemUseCasesInterface,
+    private val editDishItemUseCasesInterface: EditDishItemUseCasesInterface,
+    private val getDataUseCasesInterface: GetDataUseCasesInterface,
+    private val pdfFileUseCasesInterface: PdfFileUseCasesInterface,
+    private val createMenuUseCasesInterface: CreateMenuUseCasesInterface,
+    private val editSectionListUseCasesInterface: EditSectionListUseCasesInterface,
+    private val editInfoImageListUseCasesInterface: EditInfoImageListUseCasesInterface,
+    private val editMenuInfoUseCasesInterface: EditMenuInfoUseCasesInterface,
 ) : ContentBaseViewModel<ContentUiStates, ContentUiIntents, ContentUiEvents>(ContentUiStates.Loading) {
 
     private var menuIdVM: String? = null
@@ -213,7 +213,7 @@ class ContentViewModel @Inject constructor(
                 menuIdVM?.let { id ->
                     saveMenuInfo(
                         menuId = id,
-                        menuInfoData = uiEvent.menuInfoData
+                        menuInfoData = uiEvent.menuInfoData.copy(id = id)
                     )
                 } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
             }
@@ -253,7 +253,7 @@ class ContentViewModel @Inject constructor(
                     )
                 } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
             }
-            
+
             is ContentUiEvents.ShowMenu -> {
                 menuIdVM?.let { id ->
                     getViewMenuData(id)
@@ -287,7 +287,7 @@ class ContentViewModel @Inject constructor(
     private fun getCurrentMenuId(userId: String) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            getDataActionsInterface.getCurrentMenuId(
+            getDataUseCasesInterface.getCurrentMenuId(
                 userId = userId,
                 onEmptyMenuId = {
                     setUiIntent(ContentUiIntents.GoToCreateMenuScreen)
@@ -309,7 +309,7 @@ class ContentViewModel @Inject constructor(
     private fun getDishDataList(menuId: String) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            getDataActionsInterface.getDishDataList(
+            getDataUseCasesInterface.getDishDataList(
                 menuId = menuId,
                 onDishDataList = { dishDataList ->
                     setDishList(dishDataList)
@@ -326,7 +326,7 @@ class ContentViewModel @Inject constructor(
     private fun createMenuId(menuId: String, userId: String) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            menuActionsInterface.createMenuId(
+            createMenuUseCasesInterface.createMenuId(
                 menuId = menuId,
                 userId = userId,
                 onMenuId = { menuId ->
@@ -348,7 +348,7 @@ class ContentViewModel @Inject constructor(
     ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editDishItemActionsInterface.setUpdatedDishImage(
+            editDishItemUseCasesInterface.setUpdatedDishImage(
                 imageUri = imageUri,
                 dishData = dishData,
                 onUpdatedDish = { updatedDishData ->
@@ -366,7 +366,7 @@ class ContentViewModel @Inject constructor(
     private fun transformUpdatedDishImage(imageBitmap: Bitmap, dishData: DishData) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editDishItemActionsInterface.transformUpdatedDishImage(
+            editDishItemUseCasesInterface.transformUpdatedDishImage(
                 imageBitmap = imageBitmap,
                 dishData = dishData,
                 onUpdatedDish = { updatedDishData ->
@@ -384,7 +384,7 @@ class ContentViewModel @Inject constructor(
     private fun saveDishItem(menuId: String, dishData: DishData, dishList: List<DishData>) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editDishListActionsInterface.saveDishItem(
+            editDishListItemUseCasesInterface.saveDishItem(
                 menuId = menuId,
                 dishData = dishData,
                 dishList = dishList,
@@ -407,7 +407,7 @@ class ContentViewModel @Inject constructor(
     ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editDishItemActionsInterface.generateDishDescription(
+            editDishItemUseCasesInterface.generateDishDescription(
                 dishImage = dishImage,
                 dishData = dishData,
                 onUpdatedDish = { updatedDishData ->
@@ -427,7 +427,7 @@ class ContentViewModel @Inject constructor(
     private fun createMenuPdfFile(menuId: String, folderUri: Uri, dishList: List<DishData>) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            pdfFileActionsInterface.createMenuPdfFile(
+            pdfFileUseCasesInterface.createMenuPdfFile(
                 menuId = menuId,
                 folderUri = folderUri,
                 dishList = dishList,
@@ -451,7 +451,7 @@ class ContentViewModel @Inject constructor(
     ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            pdfFileActionsInterface.createTranslatedMenuPdfFile(
+            pdfFileUseCasesInterface.createTranslatedMenuPdfFile(
                 menuId = menuId,
                 folderUri = folderUri,
                 translateLanguage = translateLanguage,
@@ -471,7 +471,7 @@ class ContentViewModel @Inject constructor(
     private fun deleteDish(menuId: String, dishId: String, dishList: List<DishData>) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editDishListActionsInterface.deleteDishItem(
+            editDishListItemUseCasesInterface.deleteDishItem(
                 menuId = menuId,
                 dishId = dishId,
                 dishList = dishList,
@@ -491,7 +491,7 @@ class ContentViewModel @Inject constructor(
     private fun getDishAndSectionDataList(menuId: String) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            getDataActionsInterface.getSectionAndDishDataLists(
+            getDataUseCasesInterface.getSectionAndDishDataLists(
                 menuId = menuId,
                 onData = { dishList, sectionList ->
                     setDishList(dishList)
@@ -513,7 +513,7 @@ class ContentViewModel @Inject constructor(
     ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editSectionListActionsInterface.saveSectionItem(
+            editSectionListUseCasesInterface.saveSectionItem(
                 data = sectionData,
                 menuId = menuId,
                 documentId = sectionData.id,
@@ -537,11 +537,11 @@ class ContentViewModel @Inject constructor(
     ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            getDataActionsInterface.getDishDataOfTheSpecificSection(
+            getDataUseCasesInterface.getDishDataOfTheSpecificSection(
                 dishDataList = dishList,
                 sectionId = sectionData.id,
                 onDishList = { dishList ->
-                    setDishList(dishList)
+                    setDishListForSpecificSection(dishList)
                     setUiIntent(ContentUiIntents.GoToDishListScreen(sectionData))
                     setUiState(ContentUiStates.Show)
                 }
@@ -552,7 +552,7 @@ class ContentViewModel @Inject constructor(
     private fun saveMenuInfo(menuId: String, menuInfoData: MenuInfoData) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editMenuInfoActionsInterface.saveMenuInfoData(
+            editMenuInfoUseCasesInterface.saveMenuInfoData(
                 menuId = menuId,
                 menuInfoData = menuInfoData,
                 onSuccess = {
@@ -570,7 +570,7 @@ class ContentViewModel @Inject constructor(
     private fun getMenuInfoData(menuId: String) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            getDataActionsInterface.getMenuInfoData(
+            getDataUseCasesInterface.getMenuInfoData(
                 menuId = menuId,
                 onMenuInfoData = { data ->
                     setMenuInfoData(data)
@@ -591,7 +591,7 @@ class ContentViewModel @Inject constructor(
     private fun getInfoImageList(menuId: String) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            getDataActionsInterface.getInfoImageDataList(
+            getDataUseCasesInterface.getInfoImageDataList(
                 menuId = menuId,
                 onInfoImageList = { data ->
                     setInfoImageData(data)
@@ -613,7 +613,7 @@ class ContentViewModel @Inject constructor(
     ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editInfoImageListActionsInterface.saveInfoImageItem(
+            editInfoImageListUseCasesInterface.saveInfoImageItem(
                 menuId = menuId,
                 imageId = imageId,
                 uri = uri,
@@ -638,7 +638,7 @@ class ContentViewModel @Inject constructor(
     ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            editInfoImageListActionsInterface.deleteInfoImageItem(
+            editInfoImageListUseCasesInterface.deleteInfoImageItem(
                 menuId = menuId,
                 imageId = imageId,
                 infoImageList = infoImageList,
@@ -657,10 +657,10 @@ class ContentViewModel @Inject constructor(
 
     private fun getViewMenuData(
         menuId: String
-    ){
+    ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
-            getDataActionsInterface.getViewMenuData(
+            getDataUseCasesInterface.getAllMenuData(
                 menuId = menuId,
                 onViewMenuData = { data ->
                     setMenuViewData(data)
