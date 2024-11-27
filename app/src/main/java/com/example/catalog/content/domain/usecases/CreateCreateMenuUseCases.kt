@@ -1,14 +1,14 @@
-package com.example.catalog.content.presentation.viewmodel.actions
+renamepackage com.example.catalog.content.domain.usecases
 
+import com.example.catalog.content.data.adapters.FirestoreUploadAdapterInterface
 import com.example.catalog.content.domain.data.MenuIdFirebase
-import com.example.catalog.content.domain.usecases.network.UploadDataUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MenuActions @Inject constructor(
-    private val uploadDataUseCaseInterface: UploadDataUseCaseInterface,
-) : MenuActionsInterface {
+class CreateCreateMenuUseCases @Inject constructor(
+    private val firestoreUploadAdapterInterface: FirestoreUploadAdapterInterface,
+) : CreateMenuUseCasesInterface {
 
     override suspend fun createMenuId(
         menuId: String,
@@ -18,7 +18,7 @@ class MenuActions @Inject constructor(
     ) {
         try {
             withContext(Dispatchers.IO) {
-                uploadDataUseCaseInterface.uploadMenuId(
+                firestoreUploadAdapterInterface.uploadMenuId(
                     userId = userId,
                     menuIdFirebase = MenuIdFirebase(id = menuId),
                 )
@@ -30,7 +30,7 @@ class MenuActions @Inject constructor(
     }
 }
 
-interface MenuActionsInterface {
+interface CreateMenuUseCasesInterface {
     suspend fun createMenuId(
         menuId: String,
         userId: String,
