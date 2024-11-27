@@ -1,6 +1,5 @@
 package com.example.catalog.content.presentation.viewmodel
 
-import CreateMenuUseCasesInterface
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
@@ -8,6 +7,7 @@ import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.domain.data.InfoImageData
 import com.example.catalog.content.domain.data.MenuInfoData
 import com.example.catalog.content.domain.data.SectionData
+import com.example.catalog.content.domain.usecases.CreateMenuUseCasesInterface
 import com.example.catalog.content.presentation.ContentUiEvents
 import com.example.catalog.content.presentation.ContentUiIntents
 import com.example.catalog.content.presentation.ContentUiStates
