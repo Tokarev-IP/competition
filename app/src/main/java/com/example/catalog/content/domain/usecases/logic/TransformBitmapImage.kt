@@ -20,9 +20,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class TransformBitmapImageUseCase @Inject constructor(
+class TransformBitmapImage @Inject constructor(
     @ApplicationContext private val appContext: Context,
-) : TransformBitmapImageUseCaseInterface {
+) : TransformBitmapImageInterface {
 
     private suspend fun segmentImage(inputImage: InputImage): Bitmap {
         return suspendCancellableCoroutine { continuation ->
@@ -106,7 +106,7 @@ class TransformBitmapImageUseCase @Inject constructor(
         color: Int
     ): Bitmap {
         return suspendCoroutine { continuation ->
-            val result = Bitmap.createBitmap(foreground.width, foreground.height, foreground.config)
+            val result = Bitmap.createBitmap(foreground.width, foreground.height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(result)
             canvas.drawColor(color)
             canvas.drawBitmap(foreground, 0f, 0f, null)
@@ -153,7 +153,7 @@ class TransformBitmapImageUseCase @Inject constructor(
     }
 }
 
-interface TransformBitmapImageUseCaseInterface {
+interface TransformBitmapImageInterface {
     suspend fun segmentImageFromUri(uri: Uri): Bitmap
 
     suspend fun segmentImageFromBitmap(bitmap: Bitmap): Bitmap

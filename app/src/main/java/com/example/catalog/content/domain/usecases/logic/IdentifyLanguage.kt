@@ -5,7 +5,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class IdentifyLanguageUseCase {
+class IdentifyLanguage {
 
     suspend fun identifyLanguage(text: String): String? {
         return suspendCancellableCoroutine { continuation ->

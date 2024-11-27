@@ -2,14 +2,13 @@ package com.example.catalog.content.domain.usecases.logic
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resumeWithException
 
-class LabelImageUseCase {
+class LabelImage {
 
     suspend fun labelImage(context: Context, uri: Uri): Int {
         return suspendCancellableCoroutine { continuation ->

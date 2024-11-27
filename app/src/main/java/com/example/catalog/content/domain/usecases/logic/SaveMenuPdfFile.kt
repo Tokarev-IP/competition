@@ -32,7 +32,7 @@ class SaveMenuPdfFileUseCase @Inject constructor(
                     val outputStream: OutputStream? = contentResolver.openOutputStream(fileUri)
 
                     if (outputStream != null) {
-                        val pdfDocument = createMenuPdfDocument(pdfDishList = pdfDishList)
+                        val pdfDocument = createMenuPdfDocument(pdfMenuList = pdfDishList)
 
                         pdfDocument.writeTo(outputStream)
                         pdfDocument.close()
