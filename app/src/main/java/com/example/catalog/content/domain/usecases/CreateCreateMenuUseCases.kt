@@ -1,4 +1,4 @@
-renamepackage com.example.catalog.content.domain.usecases
+package com.example.catalog.content.domain.usecases
 
 import com.example.catalog.content.data.adapters.FirestoreUploadAdapterInterface
 import com.example.catalog.content.domain.data.MenuIdFirebase

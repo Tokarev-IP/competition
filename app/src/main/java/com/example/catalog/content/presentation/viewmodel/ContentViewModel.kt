@@ -1,5 +1,6 @@
 package com.example.catalog.content.presentation.viewmodel
 
+import CreateMenuUseCasesInterface
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
@@ -17,7 +18,6 @@ import com.example.catalog.content.domain.usecases.EditInfoImageListUseCasesInte
 import com.example.catalog.content.domain.usecases.EditMenuInfoUseCasesInterface
 import com.example.catalog.content.domain.usecases.EditSectionListUseCasesInterface
 import com.example.catalog.content.domain.usecases.GetDataUseCasesInterface
-import com.example.catalog.content.domain.usecases.CreateMenuUseCasesInterface
 import com.example.catalog.content.domain.usecases.PdfFileUseCasesInterface
 import com.example.catalog.login.domain.interfaces.PhoneAuthUseCaseInterface
 import com.google.firebase.auth.FirebaseUser
