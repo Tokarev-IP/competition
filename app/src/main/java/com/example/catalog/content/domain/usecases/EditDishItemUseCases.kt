@@ -1,20 +1,19 @@
-package com.example.catalog.content.presentation.viewmodel.actions
+package com.example.catalog.content.domain.usecases
 
 import android.graphics.Bitmap
 import android.net.Uri
 import com.example.catalog.content.domain.data.DishData
-import com.example.catalog.content.domain.usecases.logic.TransformBitmapImageUseCaseInterface
+import com.example.catalog.content.domain.usecases.logic.TransformBitmapImageInterface
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.GenerateAiTextUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class EditDishItemActions @Inject constructor(
-    private val transformBitmapImageUseCaseInterface: TransformBitmapImageUseCaseInterface,
+class EditDishItemUseCases @Inject constructor(
+    private val transformBitmapImageInterface: TransformBitmapImageInterface,
     private val generateAiTextUseCaseInterface: GenerateAiTextUseCaseInterface,
     private val transformImageUseCaseInterface: TransformImageUseCaseInterface,
-) : EditDishItemActionsInterface {
+) : EditDishItemUseCasesInterface {
 
     override suspend fun transformUpdatedDishImage(
         imageBitmap: Bitmap,
@@ -24,11 +23,11 @@ class EditDishItemActions @Inject constructor(
     ) {
         try {
             val bitmap = withContext(Dispatchers.Default) {
-                transformBitmapImageUseCaseInterface.segmentImageFromBitmap(imageBitmap)
+                transformBitmapImageInterface.segmentImageFromBitmap(imageBitmap)
             }
 
             val croppedBitmap = withContext(Dispatchers.Default) {
-                transformBitmapImageUseCaseInterface.cropBitmapToForeground(bitmap)
+                transformBitmapImageInterface.cropBitmapToForeground(bitmap)
             }
             onUpdatedDish(dishData.copy(updatedImageModel = croppedBitmap))
         } catch (e: Exception) {
@@ -80,7 +79,7 @@ class EditDishItemActions @Inject constructor(
     }
 }
 
-interface EditDishItemActionsInterface {
+interface EditDishItemUseCasesInterface {
     suspend fun transformUpdatedDishImage(
         imageBitmap: Bitmap,
         dishData: DishData,

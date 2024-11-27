@@ -1,23 +1,22 @@
-package com.example.catalog.content.presentation.viewmodel.actions
+package com.example.catalog.content.domain.usecases
 
 import android.graphics.Bitmap
 import android.net.Uri
+import com.example.catalog.content.data.adapters.FirebaseStorageDownloadAdapterInterface
 import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.domain.data.PdfDishData
 import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCaseInterface
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.DownloadFileUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.GenerateAiTextUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class PdfFileActions @Inject constructor(
-    private val downloadFileUseCaseInterface: DownloadFileUseCaseInterface,
+class PdfFileUseCases @Inject constructor(
+    private val firebaseStorageDownloadAdapterInterface: FirebaseStorageDownloadAdapterInterface,
     private val transformImageUseCaseInterface: TransformImageUseCaseInterface,
     private val saveMenuPdfFileUseCaseInterface: SaveMenuPdfFileUseCaseInterface,
     private val generateAiTextUseCaseInterface: GenerateAiTextUseCaseInterface,
-) : PdfFileActionsInterface {
+) : PdfFileUseCasesInterface {
 
     override suspend fun createMenuPdfFile(
         menuId: String,
@@ -35,7 +34,7 @@ class PdfFileActions @Inject constructor(
                 dish.imageModel?.let {
                     val imageByteArray: ByteArray =
                         withContext(Dispatchers.IO) {
-                            downloadFileUseCaseInterface.downloadDishImageFile(
+                            firebaseStorageDownloadAdapterInterface.downloadDishImageFile(
                                 menuId = menuId,
                                 dishId = dish.id,
                             )
@@ -99,7 +98,7 @@ class PdfFileActions @Inject constructor(
                 dish.imageModel?.let {
                     val imageByteArray: ByteArray =
                         withContext(Dispatchers.IO) {
-                            downloadFileUseCaseInterface.downloadDishImageFile(
+                            firebaseStorageDownloadAdapterInterface.downloadDishImageFile(
                                 menuId = menuId,
                                 dishId = dish.id,
                             )
@@ -112,10 +111,12 @@ class PdfFileActions @Inject constructor(
 
                 pdfDishList.add(
                     PdfDishData(
-                        name = translatedName,
+                        name = dish.name,
+                        translatedName = translatedName,
                         price = dish.price,
                         weight = dish.weight,
-                        description = translatedDescription,
+                        description = dish.description,
+                        translatedDescription = translatedDescription,
                         bitmap = imageBitmap,
                     )
                 )
@@ -133,7 +134,7 @@ class PdfFileActions @Inject constructor(
     }
 }
 
-interface PdfFileActionsInterface {
+interface PdfFileUseCasesInterface {
     suspend fun createMenuPdfFile(
         menuId: String,
         folderUri: Uri,

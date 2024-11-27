@@ -1,19 +1,19 @@
-package com.example.catalog.content.presentation.viewmodel.actions
+package com.example.catalog.content.domain.usecases
 
+import com.example.catalog.content.data.adapters.FirebaseStorageDownloadAdapterInterface
+import com.example.catalog.content.data.adapters.FirebaseStorageUploadAdapterInterface
+import com.example.catalog.content.data.adapters.FirestoreUploadAdapterInterface
 import com.example.catalog.content.domain.data.MenuInfoData
 import com.example.catalog.content.domain.extensions.toMenuInfoFirebase
-import com.example.catalog.content.domain.usecases.network.DownloadFileUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.UploadDataUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.UploadFileUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class EditMenuInfoActions @Inject constructor(
-    private val uploadDataUseCaseInterface: UploadDataUseCaseInterface,
-    private val uploadFileUseCaseInterface: UploadFileUseCaseInterface,
-    private val downloadFileUseCaseInterface: DownloadFileUseCaseInterface,
-) : EditMenuInfoActionsInterface {
+class EditMenuInfoUseCases @Inject constructor(
+    private val firestoreUploadAdapterInterface: FirestoreUploadAdapterInterface,
+    private val firebaseStorageUploadAdapterInterface: FirebaseStorageUploadAdapterInterface,
+    private val firebaseStorageDownloadAdapterInterface: FirebaseStorageDownloadAdapterInterface,
+) : EditMenuInfoUseCasesInterface {
 
     override suspend fun saveMenuInfoData(
         menuId: String,
@@ -24,27 +24,27 @@ class EditMenuInfoActions @Inject constructor(
         try {
             menuInfoData.updatedImageModel?.let { imageUri ->
                 withContext(Dispatchers.IO) { //uploading image to firebase
-                    uploadFileUseCaseInterface.uploadMenuInfoImageUsingUri(
+                    firebaseStorageUploadAdapterInterface.uploadMenuInfoImageUsingUri(
                         menuId = menuId,
                         uri = imageUri,
                     )
                 }
                 val uriFromFirebase =
                     withContext(Dispatchers.IO) { //receiving uri of uploaded image
-                        downloadFileUseCaseInterface.downloadUriOfMenuInfoImage(
+                        firebaseStorageDownloadAdapterInterface.downloadUriOfMenuInfoImage(
                             menuId = menuId,
                         )
                     }
                 val newMenuInfoData = menuInfoData.copy(imageModel = uriFromFirebase)
                 withContext(Dispatchers.IO) { //uploading data to firestore
-                    uploadDataUseCaseInterface.uploadMenuInfoData(
+                    firestoreUploadAdapterInterface.uploadMenuInfoData(
                         data = newMenuInfoData.toMenuInfoFirebase(),
                         menuId = menuId
                     )
                 }
             } ?: run {
                 withContext(Dispatchers.IO) { //uploading data to firestore
-                    uploadDataUseCaseInterface.uploadMenuInfoData(
+                    firestoreUploadAdapterInterface.uploadMenuInfoData(
                         data = menuInfoData.toMenuInfoFirebase(),
                         menuId = menuId
                     )
@@ -57,7 +57,7 @@ class EditMenuInfoActions @Inject constructor(
     }
 }
 
-interface EditMenuInfoActionsInterface {
+interface EditMenuInfoUseCasesInterface {
     suspend fun saveMenuInfoData(
         menuId: String,
         menuInfoData: MenuInfoData,

@@ -1,26 +1,24 @@
-package com.example.catalog.content.presentation.viewmodel.actions
+package com.example.catalog.content.domain.usecases
 
 import android.net.Uri
+import com.example.catalog.content.data.adapters.FirebaseStorageDeleteAdapterInterface
+import com.example.catalog.content.data.adapters.FirebaseStorageDownloadAdapterInterface
+import com.example.catalog.content.data.adapters.FirebaseStorageUploadAdapterInterface
+import com.example.catalog.content.data.adapters.FirestoreDeleteAdapterInterface
+import com.example.catalog.content.data.adapters.FirestoreUploadAdapterInterface
 import com.example.catalog.content.domain.data.InfoImageData
 import com.example.catalog.content.domain.data.InfoImageFirebase
-import com.example.catalog.content.domain.usecases.logic.TransformImageUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.DeleteDataUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.DeleteFileUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.DownloadFileUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.UploadDataUseCaseInterface
-import com.example.catalog.content.domain.usecases.network.UploadFileUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class EditInfoImageListActions @Inject constructor(
-    private val uploadDataUseCaseInterface: UploadDataUseCaseInterface,
-    private val uploadFileUseCaseInterface: UploadFileUseCaseInterface,
-    private val transformImageUseCaseInterface: TransformImageUseCaseInterface,
-    private val downloadFileUseCaseInterface: DownloadFileUseCaseInterface,
-    private val deleteDataUseCaseInterface: DeleteDataUseCaseInterface,
-    private val deleteFileUseCaseInterface: DeleteFileUseCaseInterface,
-) : EditInfoImageListActionsInterface {
+class EditInfoImageListUseCases @Inject constructor(
+    private val firestoreUploadAdapterInterface: FirestoreUploadAdapterInterface,
+    private val firebaseStorageUploadAdapterInterface: FirebaseStorageUploadAdapterInterface,
+    private val firebaseStorageDownloadAdapterInterface: FirebaseStorageDownloadAdapterInterface,
+    private val firestoreDeleteAdapterInterface: FirestoreDeleteAdapterInterface,
+    private val firebaseStorageDeleteAdapterInterface: FirebaseStorageDeleteAdapterInterface,
+) : EditInfoImageListUseCasesInterface {
 
     override suspend fun saveInfoImageItem(
         menuId: String,
@@ -33,20 +31,20 @@ class EditInfoImageListActions @Inject constructor(
     ) {
         try {
             withContext(Dispatchers.IO) { //uploading image to firebase
-                uploadFileUseCaseInterface.uploadInfoImageUsingUri(
+                firebaseStorageUploadAdapterInterface.uploadInfoImageUsingUri(
                     menuId = menuId,
                     imageId = imageId,
                     uri = uri,
                 )
             }
             val uriOfImage = withContext(Dispatchers.IO) { //receiving uri of uploaded byte array
-                downloadFileUseCaseInterface.downloadUriOfInfoImage(
+                firebaseStorageDownloadAdapterInterface.downloadUriOfInfoImage(
                     menuId = menuId,
                     imageId = imageId,
                 )
             }
             withContext(Dispatchers.IO) { //uploading data to firestore
-                uploadDataUseCaseInterface.uploadInfoImageData(
+                firestoreUploadAdapterInterface.uploadInfoImageData(
                     data = InfoImageFirebase(
                         id = imageId,
                         image = uriOfImage.toString()
@@ -77,13 +75,13 @@ class EditInfoImageListActions @Inject constructor(
     ) {
         try {
             withContext(Dispatchers.IO) { //delete image file from firebase
-                deleteFileUseCaseInterface.deleteInfoImage(
+                firebaseStorageDeleteAdapterInterface.deleteInfoImage(
                     menuId = menuId,
                     imageId = imageId,
                 )
             }
             withContext(Dispatchers.IO) { //delete image data from firestore
-                deleteDataUseCaseInterface.deleteInfoImageData(
+                firestoreDeleteAdapterInterface.deleteInfoImageData(
                     menuId = menuId,
                     imageId = imageId,
                 )
@@ -97,7 +95,7 @@ class EditInfoImageListActions @Inject constructor(
     }
 }
 
-interface EditInfoImageListActionsInterface {
+interface EditInfoImageListUseCasesInterface {
     suspend fun saveInfoImageItem(
         menuId: String,
         imageId: String,

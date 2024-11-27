@@ -1,5 +1,6 @@
-package com.example.catalog.content.presentation.viewmodel.actions
+package com.example.catalog.content.domain.usecases
 
+import com.example.catalog.content.data.adapters.FirestoreDownloadAdapterInterface
 import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.domain.data.InfoImageData
 import com.example.catalog.content.domain.data.MenuInfoData
@@ -7,15 +8,15 @@ import com.example.catalog.content.domain.data.MenuViewData
 import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.domain.extensions.toMenuInfoData
 import com.example.catalog.content.domain.functions.SortDataInterface
-import com.example.catalog.content.domain.usecases.network.DownloadDataUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.internal.filterList
 import javax.inject.Inject
 
-class GetDataActions @Inject constructor(
-    private val downloadDataUseCaseInterface: DownloadDataUseCaseInterface,
+class GetDataUseCases @Inject constructor(
+    private val firestoreDownloadAdapterInterface: FirestoreDownloadAdapterInterface,
     private val sortDataInterface: SortDataInterface,
-) : GetDataActionsInterface {
+) : GetDataUseCasesInterface {
 
     override suspend fun getCurrentMenuId(
         userId: String,
@@ -25,7 +26,7 @@ class GetDataActions @Inject constructor(
     ) {
         try {
             val data = withContext(Dispatchers.IO) {
-                downloadDataUseCaseInterface.downloadMenuIdData(userId = userId)
+                firestoreDownloadAdapterInterface.downloadMenuIdData(userId = userId)
             }
             data?.let {
                 onMenuId(it.id)
@@ -42,7 +43,7 @@ class GetDataActions @Inject constructor(
     ) {
         try {
             val dishDataList = withContext(Dispatchers.IO) {
-                downloadDataUseCaseInterface.downloadMenuDishListData(menuId = menuId)
+                firestoreDownloadAdapterInterface.downloadMenuDishListData(menuId = menuId)
             }
             onDishDataList(dishDataList)
         } catch (e: Exception) {
@@ -57,7 +58,7 @@ class GetDataActions @Inject constructor(
     ) {
         try {
             val sectionDataList = withContext(Dispatchers.IO) {
-                downloadDataUseCaseInterface.downloadMenuSectionListData(menuId = menuId)
+                firestoreDownloadAdapterInterface.downloadMenuSectionListData(menuId = menuId)
             }
             onSectionDataList(sectionDataList)
         } catch (e: Exception) {
@@ -72,10 +73,10 @@ class GetDataActions @Inject constructor(
     ) {
         try {
             val dishDataList = withContext(Dispatchers.IO) {
-                downloadDataUseCaseInterface.downloadMenuDishListData(menuId = menuId)
+                firestoreDownloadAdapterInterface.downloadMenuDishListData(menuId = menuId)
             }
             val sectionDataList = withContext(Dispatchers.IO) {
-                downloadDataUseCaseInterface.downloadMenuSectionListData(menuId = menuId)
+                firestoreDownloadAdapterInterface.downloadMenuSectionListData(menuId = menuId)
             }
             onData(dishDataList, sectionDataList)
         } catch (e: Exception) {
@@ -89,8 +90,8 @@ class GetDataActions @Inject constructor(
         onDishList: (List<DishData>) -> Unit
     ) {
         withContext(Dispatchers.Default) {
-            val dishList = dishDataList.filter { it.sectionId == sectionId }
-            onDishList(dishList)
+            val newDishList = dishDataList.filterList { this.sectionId == sectionId }
+            onDishList(newDishList)
         }
     }
 
@@ -102,12 +103,12 @@ class GetDataActions @Inject constructor(
     ) {
         try {
             val menuInfoData = withContext(Dispatchers.IO) {
-                downloadDataUseCaseInterface.downloadMenuInfoData(menuId = menuId)
+                firestoreDownloadAdapterInterface.downloadMenuInfoData(menuId = menuId)
             }
             menuInfoData?.let { data ->
                 onMenuInfoData(data.toMenuInfoData())
             } ?: onEmptyMenuInfoData()
-        } catch (e: Exception){
+        } catch (e: Exception) {
             onErrorMessage(e.message.toString())
         }
     }
@@ -118,41 +119,42 @@ class GetDataActions @Inject constructor(
         onErrorMessage: (String) -> Unit
     ) {
         try {
-            val infoImageDataList = withContext(Dispatchers.IO){
-                downloadDataUseCaseInterface.downloadInfoImageListData(menuId = menuId)
+            val infoImageDataList = withContext(Dispatchers.IO) {
+                firestoreDownloadAdapterInterface.downloadInfoImageListData(menuId = menuId)
             }
             onInfoImageList(infoImageDataList)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             onErrorMessage(e.message.toString())
         }
     }
 
-    override suspend fun getViewMenuData(
+    override suspend fun getAllMenuData(
         menuId: String,
         onViewMenuData: (MenuViewData) -> Unit,
         onErrorMessage: (String) -> Unit
     ) {
         try {
             val dishDataList = withContext(Dispatchers.IO) {
-                downloadDataUseCaseInterface.downloadMenuDishListData(menuId = menuId)
+                firestoreDownloadAdapterInterface.downloadMenuDishListData(menuId = menuId)
             }
             val sectionDataList = withContext(Dispatchers.IO) {
-                downloadDataUseCaseInterface.downloadMenuSectionListData(menuId = menuId)
+                firestoreDownloadAdapterInterface.downloadMenuSectionListData(menuId = menuId)
             }
             val menuInfoData = withContext(Dispatchers.IO) {
-                val response = downloadDataUseCaseInterface.downloadMenuInfoData(menuId = menuId)
+                val response = firestoreDownloadAdapterInterface.downloadMenuInfoData(menuId = menuId)
                 response?.toMenuInfoData() ?: MenuInfoData()
             }
-            val infoImageDataList = withContext(Dispatchers.IO){
-                downloadDataUseCaseInterface.downloadInfoImageListData(menuId = menuId)
+            val infoImageDataList = withContext(Dispatchers.IO) {
+                firestoreDownloadAdapterInterface.downloadInfoImageListData(menuId = menuId)
             }
 
-            val dishAndSectionListData = withContext(Dispatchers.Default){
+            val dishAndSectionListData = withContext(Dispatchers.Default) {
                 sortDataInterface.sortDishData(
                     dishDataList = dishDataList,
                     sectionDataList = sectionDataList,
                 )
             }
+
             onViewMenuData(
                 MenuViewData(
                     menuInfoData = menuInfoData,
@@ -160,14 +162,14 @@ class GetDataActions @Inject constructor(
                     dishListAndSectionViewDataList = dishAndSectionListData,
                 )
             )
-        } catch (e: Exception){
+        } catch (e: Exception) {
             onErrorMessage(e.message.toString())
         }
     }
 
 }
 
-interface GetDataActionsInterface {
+interface GetDataUseCasesInterface {
     suspend fun getCurrentMenuId(
         userId: String,
         onEmptyMenuId: () -> Unit,
@@ -212,7 +214,7 @@ interface GetDataActionsInterface {
         onErrorMessage: (String) -> Unit,
     )
 
-    suspend fun getViewMenuData(
+    suspend fun getAllMenuData(
         menuId: String,
         onViewMenuData: (MenuViewData) -> Unit,
         onErrorMessage: (String) -> Unit,

@@ -1,4 +1,4 @@
-package com.example.catalog.content.domain.usecases.network
+package com.example.catalog.content.domain.usecases
 
 import android.graphics.Bitmap
 import com.example.catalog.content.data.repositories.GeminiAiInterface
@@ -63,8 +63,6 @@ class GenerateAiTextUseCase @Inject constructor(
             response.text ?: throw Exception("No response text received")
         }
     }
-
-//    private val string = "AIzaSyAGbHdcGjdRGvxml2uMHmXhv6AEEAZOE-Y"
 }
 
 interface GenerateAiTextUseCaseInterface {
