@@ -43,7 +43,6 @@ fun ContentActivityCompose(
 
         is ContentUiIntents.GoToDishListScreen -> {
             val sectionData = (uiIntent as ContentUiIntents.GoToDishListScreen).sectionData
-            Log.d("DAVAI", "SectionData: $sectionData")
             navController.navigate(
                 ScreenRoutes.DishListScreen(
                     id = sectionData.id,
@@ -75,7 +74,6 @@ fun ContentActivityCompose(
 
         is ContentUiIntents.GoToEditSectionScreen -> {
             val sectionData = (uiIntent as ContentUiIntents.GoToEditSectionScreen).sectionData
-            Log.d("DAVAI", "SectionData: $sectionData")
             navController.navigate(
                 ScreenRoutes.EditSectionScreen(
                     id = sectionData.id,
@@ -131,7 +129,6 @@ fun ContentActivityCompose(
                     name = data.name,
                     position = data.position,
                 )
-                Log.d("DAVAI", "SectionData: $sectionData")
                 DishListScreen(
                     contentViewModel = contentViewModel,
                     sectionData = sectionData,
