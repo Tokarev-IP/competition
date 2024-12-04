@@ -92,6 +92,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-core:21.1.1")
     implementation ("com.google.firebase:firebase-ml-model-interpreter:22.0.4")
 
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     //MLKit
     implementation ("com.google.mlkit:image-labeling:17.0.8")
