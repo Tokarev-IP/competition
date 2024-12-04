@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class CreateCreateMenuUseCases @Inject constructor(
+class CreateMenuUseCases @Inject constructor(
     private val firestoreUploadAdapterInterface: FirestoreUploadAdapterInterface,
 ) : CreateMenuUseCasesInterface {
 
