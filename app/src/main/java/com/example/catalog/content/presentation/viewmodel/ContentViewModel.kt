@@ -143,12 +143,14 @@ class ContentViewModel @Inject constructor(
                             menuId = id,
                             folderUri = uiEvent.folderUri,
                             dishList = getDishList(),
+                            sectionList = getSectionList(),
                             translateLanguage = language,
                         )
                     } ?: createMenuPdfFile(
                         menuId = id,
                         folderUri = uiEvent.folderUri,
                         dishList = getDishList(),
+                        sectionList = getSectionList(),
                     )
                 } ?: setUiIntent(ContentUiIntents.GoToCheckIdScreen)
             }
@@ -424,13 +426,19 @@ class ContentViewModel @Inject constructor(
         }
     }
 
-    private fun createMenuPdfFile(menuId: String, folderUri: Uri, dishList: List<DishData>) {
+    private fun createMenuPdfFile(
+        menuId: String,
+        folderUri: Uri,
+        dishList: List<DishData>,
+        sectionList: List<SectionData>,
+    ) {
         setUiState(ContentUiStates.Loading)
         viewModelScope.launch {
             pdfFileUseCasesInterface.createMenuPdfFile(
                 menuId = menuId,
                 folderUri = folderUri,
                 dishList = dishList,
+                sectionList = sectionList,
                 onSuccess = { message ->
                     setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
                     setUiState(ContentUiStates.Show)
@@ -447,6 +455,7 @@ class ContentViewModel @Inject constructor(
         menuId: String,
         folderUri: Uri,
         dishList: List<DishData>,
+        sectionList: List<SectionData>,
         translateLanguage: String
     ) {
         setUiState(ContentUiStates.Loading)
@@ -456,6 +465,7 @@ class ContentViewModel @Inject constructor(
                 folderUri = folderUri,
                 translateLanguage = translateLanguage,
                 dishList = dishList,
+                sectionList = sectionList,
                 onSuccess = { message ->
                     setUiIntent(ContentUiIntents.ShowSnackBarMsg(message))
                     setUiState(ContentUiStates.Show)

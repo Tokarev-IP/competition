@@ -5,6 +5,8 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.example.catalog.content.domain.data.PdfDishData
+import com.example.catalog.content.domain.data.PdfMenuData
+import com.example.catalog.content.domain.data.SectionData
 import com.example.catalog.content.domain.functions.CreateMenuPdfFileInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -13,13 +15,14 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class SaveMenuPdfFileUseCase @Inject constructor(
+class SaveMenuPdfFile @Inject constructor(
     @ApplicationContext private val appContext: Context
-) : SaveMenuPdfFileUseCaseInterface, CreateMenuPdfFileInterface {
+) : SaveMenuPdfFileInterface, CreateMenuPdfFileInterface {
 
     override suspend fun saveMenuPdfFileInFolder(
         folderUri: Uri,
         pdfDishList: List<PdfDishData>,
+        sectionList: List<SectionData>
     ) {
         return suspendCancellableCoroutine { continuation ->
             val folder = DocumentFile.fromTreeUri(appContext, folderUri)
@@ -31,8 +34,14 @@ class SaveMenuPdfFileUseCase @Inject constructor(
                     val contentResolver: ContentResolver = appContext.contentResolver
                     val outputStream: OutputStream? = contentResolver.openOutputStream(fileUri)
 
+                    val pdfMenuDataList = mutableListOf<PdfMenuData>()
+                    for (section in sectionList) {
+                        val dishList = pdfDishList.filter { it.sectionId == section.id }
+                        pdfMenuDataList.add(PdfMenuData(section, dishList))
+                    }
+
                     if (outputStream != null) {
-                        val pdfDocument = createMenuPdfDocument(pdfMenuList = pdfDishList)
+                        val pdfDocument = createMenuPdfDocument(pdfMenuDataList = pdfMenuDataList)
 
                         pdfDocument.writeTo(outputStream)
                         pdfDocument.close()
@@ -49,9 +58,10 @@ class SaveMenuPdfFileUseCase @Inject constructor(
     }
 }
 
-interface SaveMenuPdfFileUseCaseInterface {
+interface SaveMenuPdfFileInterface {
     suspend fun saveMenuPdfFileInFolder(
         folderUri: Uri,
         pdfDishList: List<PdfDishData>,
+        sectionList: List<SectionData>,
     )
 }

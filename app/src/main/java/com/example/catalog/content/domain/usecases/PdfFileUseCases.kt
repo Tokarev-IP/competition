@@ -5,7 +5,8 @@ import android.net.Uri
 import com.example.catalog.content.data.adapters.FirebaseStorageDownloadAdapterInterface
 import com.example.catalog.content.domain.data.DishData
 import com.example.catalog.content.domain.data.PdfDishData
-import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCaseInterface
+import com.example.catalog.content.domain.data.SectionData
+import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileInterface
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCaseInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,16 +15,17 @@ import javax.inject.Inject
 class PdfFileUseCases @Inject constructor(
     private val firebaseStorageDownloadAdapterInterface: FirebaseStorageDownloadAdapterInterface,
     private val transformImageUseCaseInterface: TransformImageUseCaseInterface,
-    private val saveMenuPdfFileUseCaseInterface: SaveMenuPdfFileUseCaseInterface,
+    private val saveMenuPdfFileInterface: SaveMenuPdfFileInterface,
     private val generateAiTextUseCaseInterface: GenerateAiTextUseCaseInterface,
 ) : PdfFileUseCasesInterface {
 
     override suspend fun createMenuPdfFile(
         menuId: String,
         folderUri: Uri,
+        sectionList: List<SectionData>,
         dishList: List<DishData>,
         onSuccess: (String) -> Unit,
-        onErrorMessage: (String) -> Unit,
+        onErrorMessage: (String) -> Unit
     ) {
         try {
             val pdfDishList = mutableListOf<PdfDishData>()
@@ -52,13 +54,15 @@ class PdfFileUseCases @Inject constructor(
                         weight = dish.weight,
                         description = dish.description,
                         bitmap = imageBitmap,
+                        sectionId = dish.sectionId,
                     )
                 )
             }
             withContext(Dispatchers.IO) {
-                saveMenuPdfFileUseCaseInterface.saveMenuPdfFileInFolder(
+                saveMenuPdfFileInterface.saveMenuPdfFileInFolder(
                     folderUri = folderUri,
                     pdfDishList = pdfDishList,
+                    sectionList = sectionList,
                 )
             }
             onSuccess("PDF file was created")
@@ -71,9 +75,10 @@ class PdfFileUseCases @Inject constructor(
         menuId: String,
         folderUri: Uri,
         translateLanguage: String,
+        sectionList: List<SectionData>,
         dishList: List<DishData>,
         onSuccess: (String) -> Unit,
-        onErrorMessage: (String) -> Unit,
+        onErrorMessage: (String) -> Unit
     ) {
         try {
             val pdfDishList = mutableListOf<PdfDishData>()
@@ -111,20 +116,20 @@ class PdfFileUseCases @Inject constructor(
 
                 pdfDishList.add(
                     PdfDishData(
-                        name = dish.name,
-                        translatedName = translatedName,
+                        name = translatedName,
                         price = dish.price,
                         weight = dish.weight,
-                        description = dish.description,
-                        translatedDescription = translatedDescription,
+                        description = translatedDescription,
                         bitmap = imageBitmap,
+                        sectionId = dish.sectionId,
                     )
                 )
             }
             withContext(Dispatchers.IO) {
-                saveMenuPdfFileUseCaseInterface.saveMenuPdfFileInFolder(
+                saveMenuPdfFileInterface.saveMenuPdfFileInFolder(
                     folderUri = folderUri,
                     pdfDishList = pdfDishList,
+                    sectionList = sectionList,
                 )
             }
             onSuccess("PDF file was created")
@@ -138,6 +143,7 @@ interface PdfFileUseCasesInterface {
     suspend fun createMenuPdfFile(
         menuId: String,
         folderUri: Uri,
+        sectionList: List<SectionData>,
         dishList: List<DishData>,
         onSuccess: (String) -> Unit,
         onErrorMessage: (String) -> Unit,
@@ -147,6 +153,7 @@ interface PdfFileUseCasesInterface {
         menuId: String,
         folderUri: Uri,
         translateLanguage: String,
+        sectionList: List<SectionData>,
         dishList: List<DishData>,
         onSuccess: (String) -> Unit,
         onErrorMessage: (String) -> Unit,

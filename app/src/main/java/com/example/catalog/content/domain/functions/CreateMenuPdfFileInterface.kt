@@ -8,12 +8,12 @@ import android.graphics.pdf.PdfDocument
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
-import com.example.catalog.content.domain.data.PdfDishData
+import com.example.catalog.content.domain.data.PdfMenuData
 
 interface CreateMenuPdfFileInterface {
 
     fun createMenuPdfDocument(
-        pdfDishList: List<PdfDishData>,
+        pdfMenuDataList: List<PdfMenuData>,
         pageWidth: Int = 595,
         pageHeight: Int = 842,
         textWidth: Int = 395,
@@ -21,6 +21,8 @@ interface CreateMenuPdfFileInterface {
         marginBetweenItems: Float = 30f,
         marginBetweenText: Float = 5f,
         marginBetweenImageAndText: Float = 15f,
+        marginBetweenSectionAndText: Float = 25f,
+        sectionTextSize: Float = 18f,
         nameTextSize: Float = 14f,
         priceTextSize: Float = 12f,
         descriptionTextSize: Float = 10f,
@@ -29,6 +31,7 @@ interface CreateMenuPdfFileInterface {
         val pdfDocument = PdfDocument()
 
         val paint = Paint()
+        val sectionPaint = Paint().apply { textSize = sectionTextSize }
         val namePaint = Paint().apply { textSize = nameTextSize }
         val pricePaint = Paint().apply { textSize = priceTextSize }
         val descriptionPaint = Paint().apply { textSize = descriptionTextSize }
@@ -38,7 +41,7 @@ interface CreateMenuPdfFileInterface {
         var currentPageIndex = startPageIndex
 
         val availableImageWidth =
-            pageWidth - textWidth - 2 * margin - marginBetweenImageAndText // Пространство для изображения
+            pageWidth - textWidth - 2 * margin - marginBetweenImageAndText // Image space
 
         val pageInfo =
             PdfDocument.PageInfo.Builder(pageWidth, pageHeight, currentPageIndex).create()
@@ -46,84 +49,98 @@ interface CreateMenuPdfFileInterface {
         var page = pdfDocument.startPage(pageInfo)
         var canvas: Canvas = page.canvas
 
-        for (dish in pdfDishList) {
-            val nameText = dish.name
-            val priceText = "${dish.price} $"
-            val descriptionText = dish.description
+        for (menuSection in pdfMenuDataList) {
 
-            // Создаем StaticLayout для текста
-            val descriptionLayout = StaticLayout.Builder
-                .obtain(
-                    descriptionText,
-                    0,
-                    descriptionText.length,
-                    descriptionTextPaint,
-                    textWidth,
-                )
-                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-                .setLineSpacing(0f, 1f)
-                .setIncludePad(false)
-                .build()
+            for (i in menuSection.pdfDishData.indices) {
+                //Values of texts in the menu
+                val sectionText = menuSection.sectionData.name
+                val nameText = menuSection.pdfDishData[i].name
+                val priceText = "$ ${menuSection.pdfDishData[i].price}"
+                val descriptionText = menuSection.pdfDishData[i].description
 
-            val totalHeight =
-                descriptionLayout.height + namePaint.textSize + pricePaint.textSize + marginBetweenText * 2 // Включаем в расчет высоту названия и цены
+                // Creating static layout for description text
+                val descriptionTextLayout = StaticLayout.Builder
+                    .obtain(
+                        descriptionText,
+                        0,
+                        descriptionText.length,
+                        descriptionTextPaint,
+                        textWidth,
+                    )
+                    .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                    .setLineSpacing(0f, 1f)
+                    .setIncludePad(false)
+                    .build()
 
-            // Проверяем размер изображения и масштабируем его
-            var bitmap: Bitmap? = dish.bitmap
+                var totalHeight =
+                    descriptionTextLayout.height + namePaint.textSize +
+                            pricePaint.textSize + marginBetweenText * 2
+                if (i == 0) //add section text before first dish name
+                    totalHeight += sectionPaint.textSize + marginBetweenText
 
-            bitmap?.let { it ->
-                bitmap = createScaledBitmap(
-                    it,
-                    availableImageWidth,
-                    totalHeight
-                )
-            }
+                // Checking the image size and scale it
+                var bitmap: Bitmap? = menuSection.pdfDishData[i].bitmap
 
-            // Если блок не помещается на текущую страницу, создаем новую
-            if (currentY + totalHeight > pageHeight - margin) {
-                pdfDocument.finishPage(page)
-                currentPageIndex++
+                bitmap?.let { it ->
+                    bitmap = createScaledBitmap(
+                        it,
+                        availableImageWidth,
+                        totalHeight
+                    )
+                }
 
-                val newPageInfo = PdfDocument.PageInfo.Builder(
-                    pageWidth,
-                    pageHeight,
-                    currentPageIndex
-                ).create()
+                // If block takes more space than page, create new page
+                if (currentY + totalHeight > pageHeight - margin) {
+                    pdfDocument.finishPage(page)
+                    currentPageIndex++
 
-                canvas.drawColor(Color.WHITE)
+                    val newPageInfo = PdfDocument.PageInfo.Builder(
+                        pageWidth,
+                        pageHeight,
+                        currentPageIndex
+                    ).create()
+
+                    canvas.drawColor(Color.WHITE)
+                    canvas.save()
+                    canvas.restore()
+
+                    page = pdfDocument.startPage(newPageInfo)
+                    canvas = page.canvas
+                    currentY = margin
+                }
+
+                // Creating text and drawing it
+                if (i == 0) {
+                    canvas.drawText(sectionText, margin + textWidth / 4, currentY, sectionPaint)
+                    currentY += sectionPaint.textSize + marginBetweenText
+                }
+                canvas.drawText(nameText, margin, currentY, namePaint)
+                currentY += namePaint.textSize + marginBetweenText
+                canvas.drawText(priceText, margin, currentY, pricePaint)
+                currentY += pricePaint.textSize + marginBetweenText
+
+                // Creating description text
                 canvas.save()
+                canvas.translate(margin, currentY)
+                descriptionTextLayout.draw(canvas)
                 canvas.restore()
+                currentY += descriptionTextLayout.height
 
-                page = pdfDocument.startPage(newPageInfo)
-                canvas = page.canvas
-                currentY = margin
+                // If there is an image, draw it on the right side of the text, centered vertically
+                bitmap?.let {
+                    val imageX =
+                        margin + textWidth + marginBetweenImageAndText
+                    val imageY =
+                        currentY - totalHeight
+
+                    canvas.drawBitmap(it, imageX, imageY, paint)
+                }
+
+                // Update currentY for the next block
+                currentY += marginBetweenItems // Add margin between blocks
+                if (i == menuSection.pdfDishData.size - 1)
+                    currentY += marginBetweenSectionAndText
             }
-
-            // Рисуем текст названия и цены
-            canvas.drawText(nameText, margin, currentY, namePaint)
-            currentY += namePaint.textSize + marginBetweenText
-            canvas.drawText(priceText, margin, currentY, pricePaint)
-            currentY += pricePaint.textSize + marginBetweenText
-
-            // Рисуем описание текста
-            canvas.save()
-            canvas.translate(margin, currentY)
-            descriptionLayout.draw(canvas)
-            canvas.restore()
-            currentY += descriptionLayout.height
-
-            // Если изображение есть, рисуем его справа от текста, центрируя по вертикали
-            bitmap?.let {
-                val imageX =
-                    margin + textWidth + marginBetweenImageAndText // Позиция изображения справа от текста с отступом 20px
-                val imageY =
-                    currentY - totalHeight // Центрируем изображение по высоте текста
-
-                canvas.drawBitmap(it, imageX, imageY, paint)
-            }
-
-            // Обновляем текущую позицию Y для следующего блока
-            currentY += marginBetweenItems // Добавляем отступ после блока
         }
 
         pdfDocument.finishPage(page)

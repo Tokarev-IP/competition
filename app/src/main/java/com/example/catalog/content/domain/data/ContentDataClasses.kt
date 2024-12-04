@@ -43,12 +43,11 @@ class DocDishData(
 
 class PdfDishData(
     val name: String = "",
-    val translatedName: String = "",
     val description: String = "",
-    val translatedDescription: String = "",
     val price: Double = 0.0,
     val weight: Double = 0.0,
     val bitmap: Bitmap? = null,
+    val sectionId: String = "",
 )
 
 class PdfMenuData(
