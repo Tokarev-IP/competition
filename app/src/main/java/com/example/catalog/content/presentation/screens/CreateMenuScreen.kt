@@ -24,8 +24,4 @@ internal fun CreateMenuScreen(
             innerPadding = innerPadding,
         )
     }
-
-    LaunchedEffect(key1 = Unit) {
-        contentViewModel.setUiEvent(ContentUiEvents.CheckMenuId)
-    }
 }

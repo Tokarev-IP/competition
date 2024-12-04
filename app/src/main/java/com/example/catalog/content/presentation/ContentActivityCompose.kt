@@ -1,6 +1,5 @@
 package com.example.catalog.content.presentation
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -61,9 +60,7 @@ fun ContentActivityCompose(
         }
 
         is ContentUiIntents.GoToCreateMenuScreen -> {
-            navController.navigate(ScreenRoutes.CreateMenuScreen) {
-                popUpTo(ScreenRoutes.DishListScreen) { inclusive = true }
-            }
+            navController.navigate(ScreenRoutes.CreateMenuScreen)
             contentViewModel.clearUiIntents()
         }
 

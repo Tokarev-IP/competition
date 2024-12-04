@@ -87,7 +87,6 @@ interface ScreenRoutes {
     data object CheckIdScreen : ScreenRoutes
 
     @Serializable
-
     data object EditInfoImageListScreen : ScreenRoutes
 
     @Serializable
