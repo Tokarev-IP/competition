@@ -1,6 +1,6 @@
 package com.example.catalog.content.domain.di
 
-import com.example.catalog.content.domain.usecases.CreateCreateMenuUseCases
+import com.example.catalog.content.domain.usecases.CreateMenuUseCases
 import com.example.catalog.content.domain.usecases.CreateMenuUseCasesInterface
 import com.example.catalog.content.domain.usecases.EditDishItemUseCases
 import com.example.catalog.content.domain.usecases.EditDishItemUseCasesInterface
@@ -12,8 +12,8 @@ import com.example.catalog.content.domain.usecases.EditMenuInfoUseCases
 import com.example.catalog.content.domain.usecases.EditMenuInfoUseCasesInterface
 import com.example.catalog.content.domain.usecases.EditSectionListUseCases
 import com.example.catalog.content.domain.usecases.EditSectionListUseCasesInterface
-import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCase
-import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCaseInterface
+import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFile
+import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileInterface
 import com.example.catalog.content.domain.usecases.logic.TransformBitmapImage
 import com.example.catalog.content.domain.usecases.logic.TransformBitmapImageInterface
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCase
@@ -48,7 +48,7 @@ interface UseCasesModule {
 
     @Singleton
     @Binds
-    fun bindSaveMenuPdfFileUseCaseInterface(impl: SaveMenuPdfFileUseCase): SaveMenuPdfFileUseCaseInterface
+    fun bindSaveMenuPdfFileUseCaseInterface(impl: SaveMenuPdfFile): SaveMenuPdfFileInterface
 
     @Singleton
     @Binds
@@ -64,7 +64,7 @@ interface UseCasesModule {
 
     @Singleton
     @Binds
-    fun bindCreateMenuUseCasesInterface(impl: CreateCreateMenuUseCases): CreateMenuUseCasesInterface
+    fun bindCreateMenuUseCasesInterface(impl: CreateMenuUseCases): CreateMenuUseCasesInterface
 
     @Singleton
     @Binds

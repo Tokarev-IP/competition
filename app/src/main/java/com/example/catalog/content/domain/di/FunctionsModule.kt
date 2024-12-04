@@ -8,7 +8,7 @@ import com.example.catalog.content.domain.functions.DishListFunctions
 import com.example.catalog.content.domain.functions.DishListFunctionsInterface
 import com.example.catalog.content.domain.functions.SortData
 import com.example.catalog.content.domain.functions.SortDataInterface
-import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFileUseCase
+import com.example.catalog.content.domain.usecases.logic.SaveMenuPdfFile
 import com.example.catalog.content.domain.usecases.logic.TransformImageUseCase
 import dagger.Binds
 import dagger.Module
@@ -22,7 +22,7 @@ interface FunctionsModule {
 
     @Singleton
     @Binds
-    fun bindCreateMenuPdfFileInterface(impl: SaveMenuPdfFileUseCase): CreateMenuPdfFileInterface
+    fun bindCreateMenuPdfFileInterface(impl: SaveMenuPdfFile): CreateMenuPdfFileInterface
 
     @Singleton
     @Binds
